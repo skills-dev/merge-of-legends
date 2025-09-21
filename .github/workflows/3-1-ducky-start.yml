@@ -1,0 +1,43 @@
+name: 3-1 Ducky Start
+
+on:
+  workflow_call:
+    inputs:
+      issue-number:
+        description: "The issue number to show the challenge description"
+        required: true
+        type: number
+
+jobs:
+  show_challenge:
+    name: Show Challenge
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Add comment - show file content
+        uses: GrantBirki/comment@v2.1.1
+        with:
+          issue-number: ${{ inputs.issue-number }}
+          file: ".github/steps/3-1-ducky-intro.md"
+
+      - name: Add comment - show task
+        uses: GrantBirki/comment@v2.1.1
+        with:
+          issue-number: ${{ inputs.issue-number }}
+          file: ".github/steps/3-2-ducky-talk.md"
+
+      - name: Disable current workflow and enable next workflow
+        run: |
+          gh workflow disable "3-1 Ducky Start" || true
+          gh workflow enable "3-2 Ducky Check" || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Trigger check workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: 3-2 Ducky Check
+          token: ${{ secrets.GITHUB_TOKEN }}
+          inputs: '{ "issue-number": "${{ inputs.issue-number }}" }'

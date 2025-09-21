@@ -1,0 +1,27 @@
+name: 0-0 AutoStart
+
+on:
+  push:
+
+permissions:
+  contents: read
+  actions: write
+  issues: write
+
+jobs:
+  auto_start:
+    name: Auto Start
+    uses: ./.github/workflows/0-0-start.yml
+    secrets: inherit
+
+  stop_auto_start:
+    name: Stop Auto Start
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Disable Auto Start workflow
+        run: |
+          gh workflow disable "0-0 AutoStart"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

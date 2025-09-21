@@ -1,0 +1,47 @@
+name: 2-1 Copilot Start
+
+on:
+  workflow_call:
+    inputs:
+      issue-number:
+        description: "The issue number to show the challenge description"
+        required: true
+        type: number
+
+jobs:
+  show_challenge:
+    name: Show Challenge
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Add comment - show challenge intro
+        uses: GrantBirki/comment@v2.1.1
+        with:
+          issue-number: ${{ inputs.issue-number }}
+          file: ".github/steps/2-1-copilot-intro.md"
+
+      - name: Add comment - show task
+        uses: GrantBirki/comment@v2.1.1
+        with:
+          issue-number: ${{ inputs.issue-number }}
+          file: ".github/steps/2-2-copilot-talk.md"
+
+      - name: Add comment - show question 1
+        uses: GrantBirki/comment@v2.1.1
+        with:
+          issue-number: ${{ inputs.issue-number }}
+          file: ".github/steps/2-3-copilot-quiz-1.md"
+
+      - name: Add comment - show question 2
+        uses: GrantBirki/comment@v2.1.1
+        with:
+          issue-number: ${{ inputs.issue-number }}
+          file: ".github/steps/2-3-copilot-quiz-2.md"
+
+      - name: Disable current workflow and enable next workflow
+        run: |
+          gh workflow disable "2-1 Copilot Start" || true
+          gh workflow enable "2-2 Copilot Check" || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

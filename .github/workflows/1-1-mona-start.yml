@@ -1,0 +1,41 @@
+name: 1-1 Mona Start
+
+on:
+  workflow_call:
+    inputs:
+      issue-number:
+        description: "The issue number to show the challenge description"
+        required: true
+        type: number
+
+jobs:
+  show_challenge:
+    name: Show Challenge
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Add comment - show challenge intro
+        uses: GrantBirki/comment@v2.1.1
+        with:
+          issue-number: ${{ inputs.issue-number }}
+          file: ".github/steps/1-1-mona-intro.md"
+
+      - name: Add comment - show task
+        uses: GrantBirki/comment@v2.1.1
+        with:
+          issue-number: ${{ inputs.issue-number }}
+          file: ".github/steps/1-2-mona-talk.md"
+
+      - name: Add comment - show graph
+        uses: GrantBirki/comment@v2.1.1
+        with:
+          issue-number: ${{ inputs.issue-number }}
+          file: ".github/steps/1-3-mona-graph.md"
+
+      - name: Disable current workflow and enable next workflow
+        run: |
+          gh workflow disable "1-1 Mona Start" || true
+          gh workflow enable "1-2 Mona Check" || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,106 @@
+name: 0-1 Pick
+
+on:
+  issues:
+    types: [edited]
+
+permissions:
+  contents: read
+  actions: write
+  issues: write
+
+jobs:
+  get_selected_option:
+    name: Get Selected Option
+    runs-on: ubuntu-latest
+
+    outputs:
+      checked-item-value: ${{ steps.get-checked-item.outputs.checked-item-value }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get Checked Item
+        id: get-checked-item
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { getCheckboxes, getCheckedValue } = require("./.github/workflows/actions-utils");
+
+            // Get the updated issue body from the event payload
+            const issueBody = process.env.ISSUE_BODY;
+
+            // Get the first checked item
+            let checkboxes = getCheckboxes(issueBody);
+            console.log(`Checkboxes found: ${checkboxes.length}`);
+            let checked_item_value = getCheckedValue(checkboxes);
+
+            // Trim and make lowercase
+            checked_item_value = checked_item_value.trim();
+            checked_item_value = checked_item_value.toLowerCase();
+
+            // Log the checked item's value
+            console.log(`Checked item value: ${checked_item_value}`);
+
+            // Return the checked item's value
+            core.setOutput('checked-item-value', checked_item_value);
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+
+  disable_checkboxes:
+    name: Disable Checkboxes
+    needs: [get_selected_option]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Disable Checkboxes in Issue Body
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { disableCheckboxes } = require("./.github/workflows/actions-utils");
+
+            // Get the updated issue body from the event payload
+            const issueBody = process.env.ISSUE_BODY;
+
+            // Disable all checkboxes in the issue body
+            const updatedBody = disableCheckboxes(issueBody);
+
+            // Update the issue with the modified body
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: process.env.ISSUE_NUMBER,
+              body: updatedBody
+            });
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+
+  # Trigger the appropriate workflow based on the selected option
+  mona:
+    name: 1 Mona
+    needs: [get_selected_option]
+    if: needs.get_selected_option.outputs.checked-item-value == 'mona'
+    uses: ./.github/workflows/1-1-mona-start.yml
+    secrets: inherit
+    with:
+      issue-number: ${{ github.event.issue.number }}
+
+  copilot:
+    name: 2 Copilot
+    needs: [get_selected_option]
+    if: needs.get_selected_option.outputs.checked-item-value == 'copilot'
+    uses: ./.github/workflows/2-1-copilot-start.yml
+    secrets: inherit
+    with:
+      issue-number: ${{ github.event.issue.number }}
+
+  ducky:
+    name: 3 Ducky
+    needs: [get_selected_option]
+    if: needs.get_selected_option.outputs.checked-item-value == 'ducky'
+    uses: ./.github/workflows/3-1-ducky-start.yml
+    secrets: inherit
+    with:
+      issue-number: ${{ github.event.issue.number }}
