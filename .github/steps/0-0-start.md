@@ -1,6 +1,7 @@
 ## 🎮 Pick your challenge
 
-<img width="250px" src="https://github.com/user-attachments/assets/78fb5eec-607b-4811-9530-081cc37d03dd" align="right">
+<img width="250px" src="https://github.com/user-attachments/assets/408c6397-cdab-4c70-8444-ddd500454e82" align="right">
+
 
 You are the lead **Developant** in the magical world of **Codia**, where enchanted projects live in harmony on the **Sacred Mainline**.
 

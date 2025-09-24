@@ -1,1 +1,1 @@
-<img width="50%" alt="One last tip: Rebases are like tea — best done slowly. Especially those multi-headed ones." src="https://github.com/user-attachments/assets/9f81494a-475d-48ce-b9d1-54ac80b95501"/>
+<img width="100%" alt="One last tip: Rebases are like tea — best done slowly. Especially those multi-headed ones." src="https://github.com/user-attachments/assets/9f81494a-475d-48ce-b9d1-54ac80b95501"/>
