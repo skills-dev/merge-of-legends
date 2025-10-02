@@ -2,6 +2,11 @@
 
 <img width="1536" height="1024" alt="f8550a9e-9fa7-4c40-9c03-0a5e38d75587" src="https://github.com/user-attachments/assets/0508b09b-f4c9-49d7-84ca-3abdf57b4a09" />
 
+Save the land of Codia and restore the sacred Mainline with the help of three mythical creatures and their gifts.
+
+- Pick one of three journeys (Mona, Copilot, Ducky).
+- Solve mini challenges (about 5 minutes).
+- Combine powers and save the world.
 
 ## Usage
 
