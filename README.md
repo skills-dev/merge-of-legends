@@ -23,6 +23,10 @@ Use the below button to copy the game to a demo account. Wait **about 20 seconds
 
 [![](https://img.shields.io/badge/Copy%20Game-%E2%86%92-1f883d?style=for-the-badge&logo=github&labelColor=197935)](https://github.com/new?template_owner=skills-dev&template_name=merge-of-legends&owner=%40me&name=skills-merge-of-legends&description=Quest:+Merge+of+legends&visibility=private)
 
+> [!CAUTION]
+> If setting it up on multiple computers, copy the game to a unique repository for each computer.
+> Otherwise, players will be opening the same issue and confusing each other.
+
 ### How to play again
 
 The game will automatically reset when a user finishes.
