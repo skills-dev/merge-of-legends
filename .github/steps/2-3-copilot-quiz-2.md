@@ -1,13 +1,9 @@
-## 2. Monalisequence
+## 2. Ship with Confidence
 
-What is the missing number in this famous sequence?
-
-```txt
-0, 1, 1, 2, 3, 5, 10, __, 25, 42, 67, 131, 220, 351, 571,
-```
+What should you do before merging code suggested by Copilot?
 
 ### Answers (select one):
 
-- [ ] 15
-- [ ] 8
-- [ ] 18
+- [ ] Review it, run tests, and validate security before merging
+- [ ] Merge immediately because Copilot output is always correct
+- [ ] Skip tests if the code looks right

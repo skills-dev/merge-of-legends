@@ -74,11 +74,11 @@ jobs:
         env:
           ISSUE_NUMBER: ${{ env.ISSUE_NUMBER }}
           COMMENTS_FILE: .github/steps/3-3-ducky-talk.md
-          DELAY_DURATION_MS: 5000
+          DELAY_DURATION_MS: 500
 
       - name: Disable current workflow and enable restarting
         run: |
-          gh workflow disable "3 Ducky Check" || true
+          gh workflow disable "3-2 Ducky Check" || true
           gh workflow enable "0-0 Start" || true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -101,17 +101,11 @@ jobs:
           issue-number: ${{ env.ISSUE_NUMBER }}
           file: ".github/steps/3-5-ducky-finish.md"
 
-      - name: Pause for reading
-        run: sleep 10
-
       - name: Add comment - next challenge
         uses: GrantBirki/comment@v2.1.1
         with:
           issue-number: ${{ env.ISSUE_NUMBER }}
           file: ".github/steps/x-next-challenge.md"
-
-      - name: Pause for reading
-        run: sleep 10
 
       - name: Add comment - share links
         uses: GrantBirki/comment@v2.1.1
@@ -120,9 +114,6 @@ jobs:
           file: ".github/steps/x-share-links.md"
           vars: |
             socials_text: "I just earned the Bubbles of Insight from Ducky in the Merge of Legends GitHub Skills quest! 🧙"
-
-      - name: Pause for reading
-        run: sleep 5
 
       - name: Add comment - show tip
         uses: GrantBirki/comment@v2.1.1
@@ -148,9 +139,3 @@ jobs:
           gh workflow disable "3-2 Ducky Check" || true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Trigger Restart
-        uses: benc-uk/workflow-dispatch@v1
-        with:
-          workflow: 0-0 Start
-          token: ${{ secrets.GITHUB_TOKEN }}

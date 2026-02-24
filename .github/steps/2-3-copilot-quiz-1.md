@@ -1,17 +1,14 @@
-## 1. A strange rebase
+## 1. Prompt Craft
 
-What is the returned value of this python method?
+Which prompt gives Copilot the best chance to return a useful result?
 
-```python
-def add_numbers():
-  a = 4
-  b = 3
-  c = 1
-  return a + b + c
+```txt
+You are implementing a login API. Return Node.js code using Express,
+validate inputs, include error handling, and add one integration test.
 ```
 
 ### Answers (select one):
 
-- [ ] 10
-- [ ] 8
-- [ ] 12
+- [ ] Provide clear context, constraints, and expected output
+- [ ] Ask for code with no context or requirements
+- [ ] Skip describing language, framework, and validation needs

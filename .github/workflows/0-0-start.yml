@@ -23,6 +23,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check for existing open quest issue
+        id: existing-open-issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const expectedTitle = `${process.env.ISSUE_TITLE_PREFIX}${process.env.EXERCISE_TITLE}`;
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 100
+            });
+            const existingIssue = issues.find(issue => !issue.pull_request && issue.title === expectedTitle);
+
+            if (existingIssue) {
+              core.info(`Open quest issue already exists: #${existingIssue.number}`);
+              core.setOutput('has_open_issue', 'true');
+              core.setOutput('issue_url', existingIssue.html_url);
+              core.setOutput('issue_number', existingIssue.number.toString());
+            } else {
+              core.setOutput('has_open_issue', 'false');
+            }
+        env:
+          EXERCISE_TITLE: ${{ env.EXERCISE_TITLE }}
+          ISSUE_TITLE_PREFIX: ${{ env.ISSUE_TITLE_PREFIX }}
+
       - name: Disable all exercise workflows
         run: |
           # Find all workflow files that start with a number (0-9)
@@ -45,6 +71,7 @@ jobs:
 
       - name: Create issue
         id: create-issue
+        if: steps.existing-open-issue.outputs.has_open_issue != 'true'
         uses: actions/github-script@v7
         with:
           script: |
