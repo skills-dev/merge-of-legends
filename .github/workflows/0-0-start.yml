@@ -29,11 +29,10 @@ jobs:
         with:
           script: |
             const expectedTitle = `${process.env.ISSUE_TITLE_PREFIX}${process.env.EXERCISE_TITLE}`;
-            const { data: issues } = await github.rest.issues.listForRepo({
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
               owner: context.repo.owner,
               repo: context.repo.repo,
-              state: 'open',
-              per_page: 100
+              state: 'open'
             });
             const existingIssue = issues.find(issue => !issue.pull_request && issue.title === expectedTitle);
 

@@ -49,6 +49,7 @@ jobs:
             // Get the checkboxes and value
             const checkboxes = getCheckboxes(commentBody);
             const checked_item_value = getCheckedValue(checkboxes);
+            const checked_item_value_normalized = checked_item_value ? checked_item_value.trim().toLowerCase() : "";
 
             // If no checkboxes or no values, end early
             if (checkboxes.length > 0 && !checked_item_value) {
@@ -60,7 +61,7 @@ jobs:
             }
 
             // Determine if the answer is correct
-            let is_correct = (checked_item_value === "provide clear context, constraints, and expected output");
+            let is_correct = (checked_item_value_normalized === "provide clear context, constraints, and expected output");
 
             // Remove any existing alerts
             commentBody = removeAlerts(commentBody);
@@ -124,6 +125,7 @@ jobs:
             // Get the checkboxes and value
             const checkboxes = getCheckboxes(commentBody);
             const checked_item_value = getCheckedValue(checkboxes);
+            const checked_item_value_normalized = checked_item_value ? checked_item_value.trim().toLowerCase() : "";
 
             // If no checkboxes or no values, end early
             if (checkboxes.length > 0 && !checked_item_value) {
@@ -135,7 +137,7 @@ jobs:
             }
 
             // Determine if the answer is correct
-            let is_correct = (checked_item_value === "review it, run tests, and validate security before merging");
+            let is_correct = (checked_item_value_normalized === "review it, run tests, and validate security before merging");
 
             // Remove any existing alerts
             commentBody = removeAlerts(commentBody);
