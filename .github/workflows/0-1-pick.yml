@@ -13,6 +13,7 @@ jobs:
   get_selected_option:
     name: Get Selected Option
     runs-on: ubuntu-latest
+    if: ${{ !endsWith(github.actor, '[bot]') }}
 
     outputs:
       checked-item-value: ${{ steps.get-checked-item.outputs.checked-item-value }}
@@ -34,6 +35,13 @@ jobs:
             let checkboxes = getCheckboxes(issueBody);
             console.log(`Checkboxes found: ${checkboxes.length}`);
             let checked_item_value = getCheckedValue(checkboxes);
+
+            // If no checked item found, nothing to do
+            if (!checked_item_value) {
+              core.info('No checkboxes selected.');
+              core.setOutput('checked-item-value', '');
+              return;
+            }
 
             // Trim and make lowercase
             checked_item_value = checked_item_value.trim();
