@@ -9,6 +9,6 @@ validate inputs, include error handling, and add one integration test.
 
 ### Answers (select one):
 
-- [ ] Provide clear context, constraints, and expected output
 - [ ] Ask for code with no context or requirements
+- [ ] Provide clear context, constraints, and expected output
 - [ ] Skip describing language, framework, and validation needs
