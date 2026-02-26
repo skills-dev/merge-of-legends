@@ -32,6 +32,6 @@ Use the below button to copy the game to a demo account. Wait **about 20 seconds
 The game will automatically reset when a user finishes.
 
 1. After a user finishes the issue, it is automatically closed.
-2. Closing the issue triggers a workflow that creates a new issue (starting over).
+2. A workflow ensures there is exactly one open quest issue and links it in a comment on the closed issue.
 3. A moderator navigates to the **Issues** tab and opens the new issue.
 4. The computer is assigned a new person to play the game.
