@@ -82,12 +82,12 @@ jobs:
             > [!Caution]
             > ❌ Not quite. Copilot works best when your prompt includes context and constraints.
             `;
-              
+
               // Fail the workflow step
               core.setFailed('Question 1 is incorrect.');
             }
 
-            // Use GitHUb API to update the comment
+            // Use GitHub API to update the comment
             await github.rest.issues.updateComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -158,12 +158,12 @@ jobs:
             > [!Caution]
             > ❌ Not quite. Always review generated code, run tests, and confirm security before merge.
             `;
-              
+
               // Fail the workflow step
               core.setFailed('Question 2 is incorrect.');
             }
 
-            // Use GitHUb API to update the comment
+            // Use GitHub API to update the comment
             await github.rest.issues.updateComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -234,12 +234,12 @@ jobs:
             > [!Caution]
             > ❌ Not quite. Improve Copilot output by refining your prompt and trying again.
             `;
-              
+
               // Fail the workflow step
               core.setFailed('Question 3 is incorrect.');
             }
 
-            // Use GitHUb API to update the comment
+            // Use GitHub API to update the comment
             await github.rest.issues.updateComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
