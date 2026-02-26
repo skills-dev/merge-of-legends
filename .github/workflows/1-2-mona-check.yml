@@ -13,6 +13,7 @@ jobs:
   check_step_work:
     name: Check step work
     runs-on: ubuntu-latest
+    if: ${{ !endsWith(github.actor, '[bot]') }}
     env:
       ISSUE_NUMBER: ${{ github.event.issue.number }}
 
