@@ -34,7 +34,18 @@ jobs:
               repo: context.repo.repo,
               state: 'open'
             });
-            const existingIssue = issues.find(issue => !issue.pull_request && issue.title === expectedTitle);
+            const matchingIssues = issues.filter(issue => !issue.pull_request && issue.title === expectedTitle);
+            const existingIssue = matchingIssues[0];
+
+            for (const duplicateIssue of matchingIssues.slice(1)) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: duplicateIssue.number,
+                state: 'closed'
+              });
+              core.info(`Closed duplicate open quest issue #${duplicateIssue.number}`);
+            }
 
             if (existingIssue) {
               core.info(`Open quest issue already exists: #${existingIssue.number}`);
@@ -93,6 +104,25 @@ jobs:
           ISSUE_BODY: ${{ steps.build-issue-description.outputs.updated-text }}
           EXERCISE_TITLE: ${{ env.EXERCISE_TITLE }}
           ISSUE_TITLE_PREFIX: ${{ env.ISSUE_TITLE_PREFIX }}
+
+      - name: Set next issue URL
+        id: set-next-issue-url
+        uses: actions/github-script@v7
+        env:
+          EXISTING_ISSUE_URL: ${{ steps.existing-open-issue.outputs.issue_url }}
+          CREATED_ISSUE_URL: ${{ steps.create-issue.outputs.ISSUE_URL }}
+        with:
+          script: |
+            core.setOutput('issue_url', process.env.EXISTING_ISSUE_URL || process.env.CREATED_ISSUE_URL || '');
+
+      - name: Add comment - close with next issue link
+        if: github.event_name == 'issues' && github.event.action == 'closed' && steps.set-next-issue-url.outputs.issue_url != ''
+        uses: GrantBirki/comment@v2.1.1
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          file: ".github/steps/x-close-with-next-link.md"
+          vars: |
+            next_issue_url: ${{ steps.set-next-issue-url.outputs.issue_url }}
 
       - name: Reenable to allow restarting, and enable challenge picker workflow.
         run: |
