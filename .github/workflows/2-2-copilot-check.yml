@@ -9,10 +9,6 @@ permissions:
   actions: write
   issues: write
 
-concurrency:
-  group: ${{ github.workflow }}
-  cancel-in-progress: true
-
 jobs:
   check_step_work:
     name: Check step work

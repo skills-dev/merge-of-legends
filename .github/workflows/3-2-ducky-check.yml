@@ -1,16 +1,6 @@
 name: 3-2 Ducky Check
 
 on:
-  workflow_dispatch:
-    inputs:
-      issue-repository:
-        description: "The repository where the issue is located"
-        required: false
-        type: string
-      issue-number:
-        description: "The issue number"
-        required: true
-        type: number
   issue_comment:
     types: [created]
 
@@ -19,16 +9,13 @@ permissions:
   actions: write
   issues: write
 
-concurrency:
-  group: ${{ github.workflow }}
-  cancel-in-progress: true
-
 jobs:
   check_step_work:
     name: Check step work
     runs-on: ubuntu-latest
+    if: ${{ !endsWith(github.actor, '[bot]') }}
     env:
-      ISSUE_NUMBER: ${{ inputs.issue-number || github.event.issue.number }}
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
 
     outputs:
       all_passed: "true"
@@ -89,7 +76,7 @@ jobs:
     runs-on: ubuntu-latest
     if: needs.check_step_work.outputs.all_passed == 'true'
     env:
-      ISSUE_NUMBER: ${{ inputs.issue-number || github.event.issue.number }}
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
 
     steps:
       - name: Checkout

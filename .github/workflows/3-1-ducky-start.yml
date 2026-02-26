@@ -34,10 +34,3 @@ jobs:
           gh workflow enable "3-2 Ducky Check" || true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Trigger check workflow
-        uses: benc-uk/workflow-dispatch@v1
-        with:
-          workflow: 3-2 Ducky Check
-          token: ${{ secrets.GITHUB_TOKEN }}
-          inputs: '{ "issue-number": "${{ inputs.issue-number }}" }'
