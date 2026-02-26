@@ -82,12 +82,12 @@ jobs:
             > [!Caution]
             > ❌ Not quite. Copilot works best when your prompt includes context and constraints.
             `;
-              
+
               // Fail the workflow step
               core.setFailed('Question 1 is incorrect.');
             }
 
-            // Use GitHUb API to update the comment
+            // Use GitHub API to update the comment
             await github.rest.issues.updateComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -158,12 +158,12 @@ jobs:
             > [!Caution]
             > ❌ Not quite. Always review generated code, run tests, and confirm security before merge.
             `;
-              
+
               // Fail the workflow step
               core.setFailed('Question 2 is incorrect.');
             }
 
-            // Use GitHUb API to update the comment
+            // Use GitHub API to update the comment
             await github.rest.issues.updateComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -175,6 +175,82 @@ jobs:
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           COMMENT_ID: ${{ steps.get-question-2.outputs.comment-id }}
           COMMENT_BODY: ${{ steps.get-question-2.outputs.comment-body }}
+
+      - name: Get question 3
+        id: get-question-3
+        uses: peter-evans/find-comment@v3
+        with:
+          issue-number: ${{ env.ISSUE_NUMBER }}
+          body-includes: "## 3."
+          direction: last
+
+      - name: Check question 3
+        id: check-question-3
+        continue-on-error: true
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { getCheckboxes, getCheckedValue, disableCheckboxes, resetCheckboxes, removeAlerts } = require("./.github/workflows/actions-utils");
+
+            // Get the updated issue body from the event payload
+            let commentBody = process.env.COMMENT_BODY;
+
+            // Get the checkboxes and value
+            const checkboxes = getCheckboxes(commentBody);
+            const checked_item_value = getCheckedValue(checkboxes);
+            const checked_item_value_normalized = checked_item_value ? checked_item_value.trim().toLowerCase() : "";
+
+            // If no checkboxes or no values, end early
+            if (checkboxes.length > 0 && !checked_item_value) {
+              core.setFailed('Question 3 - Waiting for answer');
+              return;
+            } else if (checkboxes.length === 0) {
+              // Finished already. Nothing to do
+              return;
+            }
+
+            // Determine if the answer is correct
+            let is_correct = (checked_item_value_normalized === "refine the prompt with clearer requirements and ask again");
+
+            // Remove any existing alerts
+            commentBody = removeAlerts(commentBody);
+
+            // Add feedback based on correctness
+            if (is_correct) {
+              // Disable checkboxes to prevent further changes
+              commentBody = disableCheckboxes(commentBody);
+
+              // Add feedback
+              commentBody += `\n\n
+            > [!TIP]
+            > ✅ Nice! Iterating on prompts with better context is a core Copilot skill. 🧙
+            `;
+            } else {
+              // Reset checkboxes to unchecked state
+              commentBody = resetCheckboxes(commentBody);
+
+              // Add feedback
+              commentBody += `\n\n
+            > [!Caution]
+            > ❌ Not quite. Improve Copilot output by refining your prompt and trying again.
+            `;
+
+              // Fail the workflow step
+              core.setFailed('Question 3 is incorrect.');
+            }
+
+            // Use GitHub API to update the comment
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: parseInt(process.env.COMMENT_ID),
+              body: commentBody
+            });
+
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          COMMENT_ID: ${{ steps.get-question-3.outputs.comment-id }}
+          COMMENT_BODY: ${{ steps.get-question-3.outputs.comment-body }}
 
       - name: Verify all checks passed
         id: verify-checks

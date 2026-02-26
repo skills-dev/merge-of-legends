@@ -39,6 +39,12 @@ jobs:
           issue-number: ${{ inputs.issue-number }}
           file: ".github/steps/2-3-copilot-quiz-2.md"
 
+      - name: Add comment - show question 3
+        uses: GrantBirki/comment@v2.1.1
+        with:
+          issue-number: ${{ inputs.issue-number }}
+          file: ".github/steps/2-3-copilot-quiz-3.md"
+
       - name: Disable current workflow and enable next workflow
         run: |
           gh workflow disable "2-1 Copilot Start" || true
