@@ -103,11 +103,11 @@ jobs:
           issue-number: ${{ env.ISSUE_NUMBER }}
           file: ".github/steps/1-5-mona-finish.md"
 
-      - name: Add comment - next challenge
-        uses: GrantBirki/comment@v2.1.1
-        with:
-          issue-number: ${{ env.ISSUE_NUMBER }}
-          file: ".github/steps/x-next-challenge.md"
+      # - name: Add comment - next challenge
+      #   uses: GrantBirki/comment@v2.1.1
+      #   with:
+      #     issue-number: ${{ env.ISSUE_NUMBER }}
+      #     file: ".github/steps/x-next-challenge.md"
 
       - name: Add comment - share links
         uses: GrantBirki/comment@v2.1.1
