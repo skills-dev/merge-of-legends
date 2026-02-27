@@ -5,3 +5,5 @@
 Having ventured PR Mountain, you find yourself in the clouds where **Copilot** practices and trains. Acrobatically flying between tomes and scrolls, Copilot's glowing eyes lock on you and suddenly approach.
 
 Reflecting on a deep thought, Copilot says:
+
+> "I see many possible futures, but only one compiles. Show your generation's eye so I may confirm your path."
