@@ -3,7 +3,7 @@
 ## Copilot Fundamentals
 
 1. Verify that you understand Copilot best practices.
-1. In the next 2 comments, select the correct answer.
+1. In the next 3 comments, select the correct answer checkbox.
 1. Copilot will grade your response quickly after each selection.
 
 <details>
