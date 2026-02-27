@@ -98,7 +98,7 @@ jobs:
   copilot:
     name: 2 Copilot
     needs: [get_selected_option]
-    if: needs.get_selected_option.outputs.checked-item-value == 'copilot - Advanced'
+    if: needs.get_selected_option.outputs.checked-item-value == 'copilot - advanced'
     uses: ./.github/workflows/2-1-copilot-start.yml
     secrets: inherit
     with:

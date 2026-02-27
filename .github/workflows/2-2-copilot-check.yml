@@ -71,7 +71,7 @@ jobs:
               // Add feedback
               commentBody += `\n\n
             > [!TIP]
-            > ✅ Great job! Clear prompts help Copilot produce useful suggestions. 🧙
+            > ✅ Great job! Clear prompts help Copilot produce useful suggestions. :copilot:
             `;
             } else {
               // Reset checkboxes to unchecked state
@@ -147,7 +147,7 @@ jobs:
               // Add feedback
               commentBody += `\n\n
             > [!TIP]
-            > ✅ Exactly. Copilot accelerates coding, but you still own review and verification. 🧙
+            > ✅ Exactly. Copilot accelerates coding, but you still own review and verification. :copilot:
             `;
             } else {
               // Reset checkboxes to unchecked state
@@ -223,7 +223,7 @@ jobs:
               // Add feedback
               commentBody += `\n\n
             > [!TIP]
-            > ✅ Nice! Iterating on prompts with better context is a core Copilot skill. 🧙
+            > ✅ Nice! Iterating on prompts with better context is a core Copilot skill. :copilot:
             `;
             } else {
               // Reset checkboxes to unchecked state
