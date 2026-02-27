@@ -1,1 +1,1 @@
-> 💡 **One last Copilot tip:** Keep your prompts specific, then validate suggestions with tests and security checks before merging.
+<img width="100%" alt="One last tip: In the battle that ensues, heads are attached, not slane." src="https://github.com/user-attachments/assets/ffd42808-f143-4c7a-8b5f-7d41d094b2c4"/>
