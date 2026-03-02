@@ -1,4 +1,4 @@
-<img alt="Our sacred tree falls to a force of many heads. I see 4,221 possible futures, but only one compiles... Modelwrite or simple tracebinder, show me your generation's eye so I may confirm your path. " src="https://github.com/user-attachments/assets/46f3a3ee-8ed5-42dd-993c-2148ba9981ec" />
+<img alt="Our sacred tree falls to a force of many heads. I see 4,221 possible futures, but only one compiles... Modelwrite or simple tracebinder, show me your generation's eye so I may confirm your path. " src="https://github.com/user-attachments/assets/b9f38070-d1d3-4fdb-9d71-02609d223538" />
 
 ## Copilot Fundamentals
 
