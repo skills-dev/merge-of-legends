@@ -1,6 +1,6 @@
 # Ducky and the Bubbles of Clarity
 
-<img width="250px" align="right" src="https://github.com/user-attachments/assets/d70d1aa7-6dd1-4e21-abcc-6eb5834526c7" />
+<img width="250px" align="right" src="../images/ducky-portrait.png" />
 
 In a calm forest glade, upon a grand pool of reflection, you meet **Ducky**, the wisest of friends bobbing in introspective thought.
 
