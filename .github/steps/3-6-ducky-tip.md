@@ -1,1 +1,1 @@
-<img width="100%" alt="One last tip: The codes of the legendary 3 can defeat the heads of the many." src="https://github.com/user-attachments/assets/687e4d0f-90c9-416c-bf55-3e28ccec091b"/>
+<img width="100%" alt="One last tip: The codes of the legendary 3 can defeat the heads of the many." src="https://github.com/user-attachments/assets/9c4d5651-d1d9-4b48-a065-1457ae9a172f"/>
