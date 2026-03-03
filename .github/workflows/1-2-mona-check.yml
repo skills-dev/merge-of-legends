@@ -109,6 +109,12 @@ jobs:
       #     issue-number: ${{ env.ISSUE_NUMBER }}
       #     file: ".github/steps/x-next-challenge.md"
 
+      - name: Add comment - show tip
+        uses: GrantBirki/comment@v2.1.1
+        with:
+          issue-number: ${{ env.ISSUE_NUMBER }}
+          file: ".github/steps/1-6-mona-tip.md"
+
       - name: Add comment - share links
         uses: GrantBirki/comment@v2.1.1
         with:
@@ -116,12 +122,6 @@ jobs:
           file: ".github/steps/x-share-links.md"
           vars: |
             socials_text: "I just earned the Fork of Curiosity from Mona in the Merge of Legends GitHub Skills quest! 🧙"
-
-      - name: Add comment - show tip
-        uses: GrantBirki/comment@v2.1.1
-        with:
-          issue-number: ${{ env.ISSUE_NUMBER }}
-          file: ".github/steps/1-6-mona-tip.md"
 
       - name: Build issue description
         id: build-next-issue-description
