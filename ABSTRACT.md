@@ -8,9 +8,9 @@
 
 In this 5-minute mini-game, participants become the lead developer in Codia, a world where a version control glitch has fractured everything into unstable branches. To restore order, players must seek out one of three mythical creatures, each offering unique challenges and magical gifts:
 
-- **🐤 Ducky** (Beginner) - Path to Software Enlightenment: Guides newcomers through foundational Git concepts with the Bubbles of Clarity
+- **🐤 Ducky** (Beginner) - Software Developer Lifecycle (SDLC): Guides newcomers through the flow of the Software Developer Lifecycle with the Bubbles of Clarity
 - **:octocat: Mona** (Intermediate) - Guardian of the Archives: Explores branching and merging strategies, granting the Fork of Curiosity
-- **:copilot: Copilot** (Advanced) - Oracle of Predictive Spells: Challenges experienced developers with AI-assisted coding tasks, bestowing the Goggles of Insight
+- **:copilot: Copilot** (Advanced) - Practice the Flow of Prompting: Teaches developers about prompting, context, and trust-but-verify responses, bestowing the Goggles of Insight
 
 ## Interactive Quest Mechanics
 
@@ -25,7 +25,6 @@ The game leverages GitHub's native features to create an immersive, hands-on lea
 - **Quick Engagement**: 5-minute individual quests perfect for booth traffic
 - **Hands-On Learning**: Participants actively use GitHub features, not just watch
 - **Skill-Based Paths**: Three difficulty levels ensure everyone can participate
-- **Social Component**: Encourages networking as players find teammates
 - **Memorable Branding**: Fantasy narrative creates lasting impression of GitHub's capabilities
 - **Self-Service**: Automated workflows minimize staff intervention
 - **Repeatable**: Auto-resets after each completion for continuous booth activity
