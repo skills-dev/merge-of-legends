@@ -2,7 +2,7 @@ name: 3-2 Ducky Check
 
 on:
   issue_comment:
-    types: [created]
+    types: [edited]
 
 permissions:
   contents: read
@@ -18,57 +18,73 @@ jobs:
       ISSUE_NUMBER: ${{ github.event.issue.number }}
 
     outputs:
-      all_passed: "true"
+      all_passed: ${{ steps.verify-checks.outputs.all_passed }}
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Add comment - interrupted
-        if: github.event_name == 'issue_comment'
-        uses: GrantBirki/comment@v2.1.1
+      - name: Find diagram comment
+        id: find-diagram-comment
+        uses: peter-evans/find-comment@v3
         with:
           issue-number: ${{ env.ISSUE_NUMBER }}
-          file: ".github/steps/3-4-ducky-talk.md"
+          body-includes: "## Software Developer Lifecycle"
+          direction: last
 
-      - name: Add dialog from Ducky, with delay between comments
+      - name: Check diagram order
+        id: check-diagram-order
+        continue-on-error: true
         uses: actions/github-script@v7
         with:
           script: |
-            const fs = require('fs');
-            const delayDuration_ms = process.env.DELAY_DURATION_MS || 5000;
+            const { parseMermaidLabels, checkSDLCOrder } = require('./.github/workflows/check-mermaid-order');
+            const { removeAlerts } = require('./.github/workflows/actions-utils');
 
-            // Load comments from file, load each line into an array, ignore empty lines
-            const comments = fs.readFileSync(process.env.COMMENTS_FILE, 'utf-8')
-              .split('\n')
-              .map(line => line.trim())
-              .filter(line => line.length > 0);
+            let commentBody = process.env.COMMENT_BODY;
 
-            // Function to introduce a delay
-            const delay = ms => new Promise(res => setTimeout(res, ms));
+            if (!commentBody) {
+              core.setFailed('No diagram comment found.');
+              return;
+            }
 
-            // Add a comment for each line in the comments array, with a delay between each
-            for (let i = 0; i < comments.length; i++) {
-              await github.rest.issues.createComment({
+            const labels = parseMermaidLabels(commentBody);
+            const isCorrect = checkSDLCOrder(labels);
+
+            // Remove any existing alerts before adding new feedback
+            commentBody = removeAlerts(commentBody);
+
+            if (isCorrect) {
+              commentBody += `\n\n> [!TIP]\n> ✅ Perfect! That's the correct Software Developer Lifecycle order! 🐤\n`;
+            } else {
+              commentBody += `\n\n> [!Caution]\n> ❌ Not quite! Order found: ${labels.join(' → ')}. Try again!\n`;
+              core.setFailed('Diagram order is incorrect.');
+            }
+
+            await github.rest.issues.updateComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: process.env.ISSUE_NUMBER,
-              body: comments[i]
-              });
-              
-              // Wait for the specified delay duration before adding the next comment
-              await delay(delayDuration_ms);
-            }
+              comment_id: parseInt(process.env.COMMENT_ID),
+              body: commentBody
+            });
         env:
-          ISSUE_NUMBER: ${{ env.ISSUE_NUMBER }}
-          COMMENTS_FILE: .github/steps/3-3-ducky-talk.md
-          DELAY_DURATION_MS: 500
+          COMMENT_BODY: ${{ steps.find-diagram-comment.outputs.comment-body }}
+          COMMENT_ID: ${{ steps.find-diagram-comment.outputs.comment-id }}
 
-      - name: Disable current workflow and enable restarting
-        run: |
-          gh workflow disable "3-2 Ducky Check" || true
-          gh workflow enable "0-0 Start" || true
+      - name: Verify all checks passed
+        id: verify-checks
+        uses: actions/github-script@v7
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          steps_outcomes: ${{ toJson(steps.*.outcome) }}
+        with:
+          script: |
+            core.info(`Steps outcomes: ${process.env.steps_outcomes}`);
+            const allPassed = !process.env.steps_outcomes.includes('failure');
+            core.setOutput('all_passed', allPassed.toString());
+            if (allPassed) {
+              core.info('All checks passed.');
+            } else {
+              core.info('Some checks failed. Please review the comments for details.');
+            }
 
   finish_challenge:
     name: Finish challenge
