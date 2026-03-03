@@ -19,22 +19,26 @@ jobs:
       checked-item-value: ${{ steps.get-checked-item.outputs.checked-item-value }}
 
     steps:
-      - uses: actions/checkout@v4
-
       - name: Get Checked Item
         id: get-checked-item
         uses: actions/github-script@v7
         with:
           script: |
-            const { getCheckboxes, getCheckedValue } = require("./.github/workflows/actions-utils");
-
             // Get the updated issue body from the event payload
-            const issueBody = process.env.ISSUE_BODY;
+            const issueBody = process.env.ISSUE_BODY || '';
+
+            // Get all checkboxes
+            const checkboxes = [...issueBody.matchAll(/- \[([ xX])\] (.+)/g)];
+            console.log(`Checkboxes found: ${checkboxes.length}`);
 
             // Get the first checked item
-            let checkboxes = getCheckboxes(issueBody);
-            console.log(`Checkboxes found: ${checkboxes.length}`);
-            let checked_item_value = getCheckedValue(checkboxes);
+            let checked_item_value = null;
+            for (const checkbox of checkboxes) {
+              if (checkbox[1].toLowerCase() === 'x') {
+                checked_item_value = checkbox[2].trim();
+                break;
+              }
+            }
 
             // If no checked item found, nothing to do
             if (!checked_item_value) {
@@ -44,8 +48,7 @@ jobs:
             }
 
             // Trim and make lowercase
-            checked_item_value = checked_item_value.trim();
-            checked_item_value = checked_item_value.toLowerCase();
+            checked_item_value = checked_item_value.trim().toLowerCase();
 
             // Log the checked item's value
             console.log(`Checked item value: ${checked_item_value}`);
@@ -58,29 +61,41 @@ jobs:
   disable_checkboxes:
     name: Disable Checkboxes
     needs: [get_selected_option]
+    if: needs.get_selected_option.outputs.checked-item-value != ''
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
-      - uses: actions/checkout@v4
-
       - name: Disable Checkboxes in Issue Body
         uses: actions/github-script@v7
         with:
           script: |
-            const { disableCheckboxes } = require("./.github/workflows/actions-utils");
-
             // Get the updated issue body from the event payload
-            const issueBody = process.env.ISSUE_BODY;
+            const issueBody = process.env.ISSUE_BODY || '';
 
             // Disable all checkboxes in the issue body
-            const updatedBody = disableCheckboxes(issueBody);
-
-            // Update the issue with the modified body
-            await github.rest.issues.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: process.env.ISSUE_NUMBER,
-              body: updatedBody
+            const updatedBody = issueBody.replace(/- \[([ xX])\] (.+)/g, (match, checked, label) => {
+              const emoji = String(checked).toLowerCase() === 'x' ? '✅' : '⬜️';
+              return `${emoji} ${label}`;
             });
+
+            // Update the issue with the modified body, retrying on 5xx errors
+            let lastError;
+            for (let attempt = 1; attempt <= 3; attempt++) {
+              try {
+                await github.rest.issues.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: process.env.ISSUE_NUMBER,
+                  body: updatedBody
+                });
+                return;
+              } catch (err) {
+                lastError = err;
+                if (!err.status || err.status < 500 || attempt === 3) break;
+                await new Promise(r => setTimeout(r, 1000 * attempt));
+              }
+            }
+            throw lastError;
         env:
           ISSUE_BODY: ${{ github.event.issue.body }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
@@ -98,7 +113,7 @@ jobs:
   copilot:
     name: 2 Copilot
     needs: [get_selected_option]
-    if: needs.get_selected_option.outputs.checked-item-value == 'copilot - Advanced'
+    if: needs.get_selected_option.outputs.checked-item-value == 'copilot - advanced'
     uses: ./.github/workflows/2-1-copilot-start.yml
     secrets: inherit
     with:
