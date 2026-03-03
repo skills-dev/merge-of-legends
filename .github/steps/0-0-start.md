@@ -9,7 +9,7 @@ But something’s gone wrong. A glitch in version control has caused everything 
 
 The engineering team checked with the top experts and figured out the only way to fix things: find three key resources that can help restore everything back to normal.
 
-- 🐤 **Ducky** – Software Developer Lifecycle (SDLC)
+- 🐤 **Ducky** – Path to Software Enlightenment
 - :octocat: **Mona** – Guardian of the Archives
 - :copilot: **Copilot** – Practice the Flow of Prompting
 
