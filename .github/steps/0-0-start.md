@@ -24,4 +24,5 @@ Select 1 challenge then wait a moment (max 15 seconds).
 - [ ] Mona - Intermediate
 - [ ] Copilot - Advanced
 
+**Once you select a path you cannot change your selection**
 Do **not** click **Create sub-issue**.
