@@ -20,10 +20,6 @@ The game leverages GitHub's native features to create an immersive, hands-on lea
 - Beautiful narrative storytelling with custom artwork for each character
 - Progressive difficulty levels accommodate developers of all skill levels
 
-## Collaborative Finale
-
-After completing individual quests, participants collect their magical gift and team up with two other players who have obtained different artifacts. Together, they enter "the Dungeon" via QR code to complete the collaborative **Merge of Legends** challenge, demonstrating the power of teamwork in software development.
-
 ## Conference Booth Benefits
 
 - **Quick Engagement**: 5-minute individual quests perfect for booth traffic
