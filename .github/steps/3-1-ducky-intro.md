@@ -1,7 +1,8 @@
 # Ducky and the Bubbles of Clarity
 
-<img width="250px" align="right" src="https://github.com/user-attachments/assets/d70d1aa7-6dd1-4e21-abcc-6eb5834526c7" />
+<img width="250px" align="right" src="https://github.com/user-attachments/assets/a26dd081-82cd-44ac-bf9a-48d4fe9caa06" />
 
-In a calm forest glade, upon a grand pool of reflection, you meet **Ducky**, as the lead adventurer guide **Ducky**.
+In a calm forest glade, upon a grand pool of reflection, you meet **Ducky**,<br /> 
+as the lead adventurer guide **Ducky**.
 
 Show **Ducky** the path to software enlightenment!”
