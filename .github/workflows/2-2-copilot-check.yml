@@ -302,12 +302,6 @@ jobs:
           issue-number: ${{ env.ISSUE_NUMBER }}
           file: ".github/steps/2-6-copilot-tip.md"
 
-      - name: Add comment - show tip
-        uses: GrantBirki/comment@v2.1.1
-        with:
-          issue-number: ${{ env.ISSUE_NUMBER }}
-          file: ".github/steps/2-6-copilot-tip.md"
-
       - name: Add comment - share links
         uses: GrantBirki/comment@v2.1.1
         with:
