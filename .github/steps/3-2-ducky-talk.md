@@ -16,5 +16,7 @@ graph LR
 <summary>Having trouble? 🤷</summary><br/>
 
 > 💡 **Tip:** Edit the labels inside the `[ ]` brackets in the mermaid code block to put the stages in the correct order!
+> 💡 **Tip:** Copy the line with the `[ ]` and just edit what is inside the box!
+> 💡 **Tip:** Make sure the text inisde `[ `] is exactly the same!
 
 </details>
