@@ -32,7 +32,7 @@ function parseMermaidLabels(text) {
 }
 
 /**
- * Check whether the provided labels match the correct Software Development Lifecycle order:
+ * Check whether the provided labels match the correct Software Developer Lifecycle order:
  * ANALYSIS → DESIGN → DEVELOPMENT → TESTING → DEPLOYMENT → MAINTENANCE
  *
  * @param {string[]} labels

@@ -28,7 +28,7 @@ jobs:
         uses: peter-evans/find-comment@v3
         with:
           issue-number: ${{ env.ISSUE_NUMBER }}
-          body-includes: "## Software Development Lifecycle"
+          body-includes: "## Software Developer Lifecycle"
           direction: last
 
       - name: Check diagram order
@@ -54,7 +54,7 @@ jobs:
             commentBody = removeAlerts(commentBody);
 
             if (isCorrect) {
-              commentBody += `\n\n> [!TIP]\n> ✅ Perfect! That's the correct Software Development Lifecycle order! 🐤\n`;
+              commentBody += `\n\n> [!TIP]\n> ✅ Perfect! That's the correct Software Developer Lifecycle order! 🐤\n`;
             } else {
               commentBody += `\n\n> [!Caution]\n> ❌ Not quite! Order found: ${labels.join(' → ')}. Try again!\n`;
               core.setFailed('Diagram order is incorrect.');
