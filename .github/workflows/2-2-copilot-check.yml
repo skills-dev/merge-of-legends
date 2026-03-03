@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Get question 1
         id: get-question-1
@@ -282,7 +282,7 @@ jobs:
       ISSUE_NUMBER: ${{ github.event.issue.number }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Add comment - finish
         uses: GrantBirki/comment@v2.1.1
