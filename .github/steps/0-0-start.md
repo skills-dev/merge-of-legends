@@ -18,11 +18,11 @@ Each will grant you a magical gift. When united, they form the **Merge of Legend
 
 ### Which path do you seek?
 
+**Once you select a path you cannot change your selection**
 Select 1 challenge then wait a moment (max 15 seconds).
 
 - [ ] Ducky - Beginner
 - [ ] Mona - Intermediate
 - [ ] Copilot - Advanced
 
-- **Once you select a path you cannot change your selection**
-- Do **not** click **Create sub-issue**.
+Do **not** click **Create sub-issue**.
