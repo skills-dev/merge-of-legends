@@ -4,7 +4,7 @@
 
 Save the land of Codia and restore the sacred Mainline with the help of three mythical creatures and their gifts.
 
-- Pick one of three journeys (Mona, Copilot, Ducky).
+- Pick one of three journeys (Ducky, Mona, Copilot).
 - Solve mini challenges (about 5 minutes).
 - Combine powers and save the world.
 
