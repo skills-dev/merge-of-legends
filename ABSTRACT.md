@@ -35,6 +35,6 @@ Built entirely on GitHub's platform using:
 - GitHub Issues for game interface
 - GitHub Actions workflows for game logic and validation
 - Markdown-based narrative content
-- Private repository templates for easy deployment
+- Repository templates for easy deployment
 
 Perfect for developer conferences, hackathons, GitHub Universe, and community events where you want to showcase GitHub's capabilities through an engaging, gamified experience.
