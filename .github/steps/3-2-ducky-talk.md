@@ -7,6 +7,7 @@ The mermaid diagram below shows the stages of a **Software Developer Lifecycle**
 **Edit this comment** and reorder the stages in the mermaid diagram so they are in the correct order.
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {'mainBkg': '#ffffff', 'nodeTextColor': '#000000', 'nodeBorder': '#000000'}}}%%
 graph LR
     A[ANALYSIS] --> B[TESTING] --> C[DESIGN] --> D[DEPLOYMENT] --> E[MAINTENANCE] --> F[DEVELOPMENT]
 ```
