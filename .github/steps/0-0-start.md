@@ -1,7 +1,6 @@
 ## 🎮 Pick your challenge
 
-<img width="250px" src="https://github.com/user-attachments/assets/408c6397-cdab-4c70-8444-ddd500454e82" align="right">
-
+<img width="250px" alt="start-mol" src="https://github.com/user-attachments/assets/1cd75bb9-2e5f-40c7-b895-e044b51f478b" align="right">
 
 You’re the lead developer in a magical place called Codia, where everything normally runs smoothly on the main branch.
 
