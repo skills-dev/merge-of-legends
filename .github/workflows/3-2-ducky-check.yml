@@ -126,7 +126,7 @@ jobs:
 
       - name: Build issue description
         id: build-next-issue-description
-        uses: skills/action-text-variables@v3
+        uses: skills/action-text-variables@v0.9.1
         with:
           template-file: .github/steps/0-0-start.md
           template-vars: |

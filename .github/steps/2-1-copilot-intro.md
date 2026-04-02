@@ -1,6 +1,6 @@
 # Copilot and the Goggles of Insight
 
-<img width="250px" src="https://github.com/user-attachments/assets/af093a96-9aef-4692-a763-6486da90ab46" align="right">
+<img width="250px" src="../images/copilot-intro.png" align="right">
 
 Having ventured PR Mountain, you find yourself in the clouds where **Copilot** practices and trains. Acrobatically flying between tomes and scrolls, Copilot's glowing eyes lock on you and suddenly approach.
 

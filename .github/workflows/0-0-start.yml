@@ -21,7 +21,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          ref: main
 
       - name: Check for existing open quest issue
         id: existing-open-issue
@@ -73,7 +76,7 @@ jobs:
 
       - name: Build issue description
         id: build-issue-description
-        uses: skills/action-text-variables@v3
+        uses: skills/action-text-variables@v0.9.1
         with:
           template-file: .github/steps/0-0-start.md
           template-vars: |

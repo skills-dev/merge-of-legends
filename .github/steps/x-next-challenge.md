@@ -1,6 +1,6 @@
 ## The journey isn't over! 🧙
 
-<img width="250px" src="https://github.com/user-attachments/assets/9e3c346e-0987-4d29-8031-b1240fac6b3a" align="right">
+<img width="250px" src="../images/next-challenge-hero.png" align="right">
 
 With your magical gift collected, you are ready to tackle the merge of legends!
 
@@ -9,6 +9,6 @@ With your magical gift collected, you are ready to tackle the merge of legends!
 
 <p align="center">
    <b>Enter the Dungeon</b><br />
-   <img width="200" src="https://github.com/user-attachments/assets/bb7e28cf-d352-4513-98c2-656cdcb4d18f" /><br/>
+   <img width="200" src="../images/next-challenge-item.png" /><br/>
    https://gh.io/MoL
 </p>
