@@ -1,4 +1,4 @@
-<img alt="“To control chaos, you must first embrace it. Return to the basics to correct our history. Upon this new base, you will gain the **Fork of Curiosity**." src="https://github.com/user-attachments/assets/b975f27e-ebd9-4869-b9ad-de5b42986a2f" />
+<img alt="“To control chaos, you must first embrace it. Return to the basics to correct our history. Upon this new base, you will gain the **Fork of Curiosity**." src="../images/mona-chaos-quote.png" />
 
 ## Repair Codia's Mainline
 
