@@ -7,9 +7,9 @@ Match the pairs by uncovering all 6 cards.
 **Edit this comment** so each card contains one image path.  
 Use these three images, with **each image used exactly 2 times**:
 
-<img width="220" alt="Ducky intro" src="../images/ducky-intro.png" />
-<img width="220" alt="Mona intro" src="../images/mona-intro.png" />
-<img width="220" alt="Copilot intro" src="../images/copilot-intro.png" />
+<img width="220" alt="Ducky intro" src=".github/images/ducky-intro.png" />
+<img width="220" alt="Mona intro" src=".github/images/mona-intro.png" />
+<img width="220" alt="Copilot intro" src=".github/images/copilot-intro.png" />
 
 Example format:
 
