@@ -86,6 +86,20 @@ const [IMAGE_1, IMAGE_2, IMAGE_3] = REQUIRED_IMAGES;
   );
 })();
 
+// checkDuckyMatches: card containing a required image URL plus an extra URL returns false
+(() => {
+  assert.strictEqual(
+    checkDuckyMatches([
+      IMAGE_1,
+      IMAGE_2,
+      IMAGE_3,
+      IMAGE_1,
+      IMAGE_2,
+      `${IMAGE_3} https://example.com/x.png`,
+    ]),
+    false
+  );
+})();
 // checkDuckyMatches: hidden card value returns false
 (() => {
   assert.strictEqual(
