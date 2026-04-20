@@ -42,7 +42,7 @@ const [IMAGE_1, IMAGE_2, IMAGE_3] = REQUIRED_IMAGES;
   assert.deepStrictEqual(parseUncoveredCards(undefined), []);
 })();
 
-// checkDuckyMatches: raw image URLs with pairs returns true
+// checkDuckyMatches: raw image paths with pairs returns true
 (() => {
   assert.strictEqual(
     checkDuckyMatches([IMAGE_1, IMAGE_2, IMAGE_3, IMAGE_1, IMAGE_2, IMAGE_3]),
