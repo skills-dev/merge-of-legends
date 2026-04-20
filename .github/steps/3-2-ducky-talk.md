@@ -5,7 +5,8 @@
 Match the pairs by uncovering all 6 cards.
 
 **Edit this comment** so each card contains one image URL.  
-Use these three image URLs, with **each image used exactly 2 times**:
+Use these three image URLs, with **each image used exactly 2 times**.
+Preview images are shown below for reference; for card values, use the exact URLs listed under them:
 
 <img width="220" alt="Ducky intro" src="../images/ducky-intro.png" />
 <img width="220" alt="Mona intro" src="../images/mona-intro.png" />
