@@ -1,7 +1,7 @@
 const REQUIRED_IMAGES = [
-  "https://github.com/user-attachments/assets/ef33b2a2-0156-4aa8-b28e-9a39597b4197",
-  "https://github.com/user-attachments/assets/0c56a61d-f06c-44a4-842b-ec93fb764a79",
-  "https://github.com/user-attachments/assets/e9a07088-41fc-499c-971f-b175884a0711",
+  "../images/ducky-pipes-frozen.png",
+  "../images/ducky-runners-not-running.png",
+  "../images/ducky-mainline-corrupted.png",
 ];
 
 /**
@@ -30,7 +30,13 @@ function parseUncoveredCards(text) {
 
 function extractImageUrls(cardValue) {
   if (typeof cardValue !== "string") return [];
-  return cardValue.match(/https?:\/\/[^\s)>"'`]+/g) || [];
+  const markdownImageMatches = [
+    ...cardValue.matchAll(/!\[[^\]]*\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g),
+  ].map((match) => match[1]);
+  const urlMatches = cardValue.match(/https?:\/\/[^\s)>"'`]+/g) || [];
+  const localPathMatches =
+    cardValue.match(/(?:\.\.?\/)?(?:[\w.-]+\/)*[\w.-]+\.(?:png|jpe?g|gif|webp|svg)/gi) || [];
+  return [...new Set([...markdownImageMatches, ...urlMatches, ...localPathMatches])];
 }
 
 /**

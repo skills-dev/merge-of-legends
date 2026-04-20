@@ -42,7 +42,7 @@ const [IMAGE_1, IMAGE_2, IMAGE_3] = REQUIRED_IMAGES;
   assert.deepStrictEqual(parseUncoveredCards(undefined), []);
 })();
 
-// checkDuckyMatches: raw URLs with pairs returns true
+// checkDuckyMatches: raw image paths with pairs returns true
 (() => {
   assert.strictEqual(
     checkDuckyMatches([IMAGE_1, IMAGE_2, IMAGE_3, IMAGE_1, IMAGE_2, IMAGE_3]),
@@ -81,7 +81,7 @@ const [IMAGE_1, IMAGE_2, IMAGE_3] = REQUIRED_IMAGES;
 // checkDuckyMatches: unknown image returns false
 (() => {
   assert.strictEqual(
-    checkDuckyMatches([IMAGE_1, IMAGE_2, IMAGE_3, IMAGE_1, IMAGE_2, "https://example.com/x.png"]),
+    checkDuckyMatches([IMAGE_1, IMAGE_2, IMAGE_3, IMAGE_1, IMAGE_2, "../images/not-real.png"]),
     false
   );
 })();
@@ -105,6 +105,21 @@ const [IMAGE_1, IMAGE_2, IMAGE_3] = REQUIRED_IMAGES;
   assert.strictEqual(
     checkDuckyMatches([IMAGE_1, IMAGE_2, IMAGE_3, IMAGE_1, IMAGE_2, "`HIDDEN`"]),
     false
+  );
+})();
+
+// checkDuckyMatches: plain text containing a valid local image path returns true
+(() => {
+  assert.strictEqual(
+    checkDuckyMatches([
+      `Use this ${IMAGE_1}`,
+      IMAGE_2,
+      IMAGE_3,
+      IMAGE_1,
+      IMAGE_2,
+      IMAGE_3,
+    ]),
+    true
   );
 })();
 

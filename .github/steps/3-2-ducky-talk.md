@@ -4,12 +4,16 @@
 
 Match the pairs by uncovering all 6 cards.
 
-**Edit this comment** so each card contains one image URL.  
+**Edit this comment** so each card contains one image path.  
 Use these three images, with **each image used exactly 2 times**:
 
-<img width="220" alt="Oracle of Predictive Spells" src="https://github.com/user-attachments/assets/ef33b2a2-0156-4aa8-b28e-9a39597b4197" />
-<img width="220" alt="Second image option for the Ducky Match Game" src="https://github.com/user-attachments/assets/0c56a61d-f06c-44a4-842b-ec93fb764a79" />
-<img width="220" alt="Third image option for the Ducky Match Game" src="https://github.com/user-attachments/assets/e9a07088-41fc-499c-971f-b175884a0711" />
+<img width="220" alt="Ducky pipes frozen" src="../images/ducky-pipes-frozen.png" />
+<img width="220" alt="Ducky runners not running" src="../images/ducky-runners-not-running.png" />
+<img width="220" alt="Ducky mainline corrupted" src="../images/ducky-mainline-corrupted.png" />
+
+Example format:
+
+`![Ducky pipes](../images/ducky-pipes-frozen.png)`
 
 ### Uncovered Cards
 
