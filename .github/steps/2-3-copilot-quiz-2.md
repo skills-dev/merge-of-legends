@@ -1,9 +1,10 @@
-## 2. Ship with Confidence
+## 2. SDLC Meaning
 
-What should you do before merging code suggested by Copilot?
+What does the acronym SDLC stand for?
 
 ### Answers (select one):
 
-- [ ] Merge immediately because Copilot output is always correct
-- [ ] Skip tests if the code looks right
-- [ ] Review it, run tests, and validate security before merging
+- [ ] Secure Deployment Life Cycle
+- [ ] Software Development Life Cycle
+- [ ] System Design Logic Chain
+- [ ] Service Delivery Lifecycle Control

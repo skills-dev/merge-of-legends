@@ -1,9 +1,8 @@
-## 3. Iterate to Improve
+## 3. MCP Knowledge Check
 
-What is the best way to improve Copilot output when the first suggestion misses the mark?
+Will you have to understand MCP servers for the GH-600 exam?
 
 ### Answers (select one):
 
-- [ ] Accept the first suggestion and refactor later without review
-- [ ] Refine the prompt with clearer requirements and ask again
-- [ ] Disable tests to speed up iteration
+- [ ] True
+- [ ] False
