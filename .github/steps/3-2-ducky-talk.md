@@ -4,16 +4,16 @@
 
 Match the pairs by uncovering all 6 cards.
 
-**Edit this comment** so each card contains one image path.  
+**Edit this comment** so each card contains one image URL.  
 Use these three images, with **each image used exactly 2 times**:
 
-<img width="220" alt="Ducky pipes frozen" src="../images/ducky-pipes-frozen.png" />
-<img width="220" alt="Ducky runners not running" src="../images/ducky-runners-not-running.png" />
-<img width="220" alt="Ducky mainline corrupted" src="../images/ducky-mainline-corrupted.png" />
+<img width="220" alt="Ducky image option 1 for the Ducky Match Game" src="https://github.com/user-attachments/assets/c9d4a45b-5e71-4d34-8aab-1cb28ecca8cb" />
+<img width="220" alt="Ducky image option 2 for the Ducky Match Game" src="https://github.com/user-attachments/assets/062f5275-7e33-4355-85ef-fc958433df81" />
+<img width="220" alt="Ducky image option 3 for the Ducky Match Game" src="https://github.com/user-attachments/assets/37302691-a101-4436-8336-7c0c991ad05d" />
 
 Example format:
 
-`![Ducky pipes](../images/ducky-pipes-frozen.png)`
+`![Ducky image](https://github.com/user-attachments/assets/c9d4a45b-5e71-4d34-8aab-1cb28ecca8cb)`
 
 ### Uncovered Cards
 
