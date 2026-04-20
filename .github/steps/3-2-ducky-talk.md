@@ -8,8 +8,8 @@ Match the pairs by uncovering all 6 cards.
 Use these three images, with **each image used exactly 2 times**:
 
 <img width="220" alt="Oracle of Predictive Spells" src="https://github.com/user-attachments/assets/ef33b2a2-0156-4aa8-b28e-9a39597b4197" />
-<img width="220" alt="Image 2" src="https://github.com/user-attachments/assets/0c56a61d-f06c-44a4-842b-ec93fb764a79" />
-<img width="220" alt="Image 3" src="https://github.com/user-attachments/assets/e9a07088-41fc-499c-971f-b175884a0711" />
+<img width="220" alt="Second image option for the Ducky Match Game" src="https://github.com/user-attachments/assets/0c56a61d-f06c-44a4-842b-ec93fb764a79" />
+<img width="220" alt="Third image option for the Ducky Match Game" src="https://github.com/user-attachments/assets/e9a07088-41fc-499c-971f-b175884a0711" />
 
 ### Uncovered Cards
 
