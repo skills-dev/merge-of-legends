@@ -7,3 +7,4 @@ What does the acronym SDLC stand for?
 - [ ] Secure Deployment Lifecycle Cycle
 - [ ] Software Development Life Cycle
 - [ ] System Design Logic Chain
+- [ ] Service Delivery Lifecycle Control
