@@ -58,7 +58,7 @@ jobs:
             }
 
             // Determine if the answer is correct
-            let is_correct = (checked_item_value_normalized === "provide clear context, constraints, and expected output");
+            let is_correct = (checked_item_value_normalized === "6");
 
             // Remove any existing alerts
             commentBody = removeAlerts(commentBody);
@@ -71,7 +71,7 @@ jobs:
               // Add feedback
               commentBody += `\n\n
             > [!TIP]
-            > ✅ Great job! Clear prompts help Copilot produce useful suggestions. :copilot:
+            > ✅ Correct! GH-600 includes 6 domains. :copilot:
             `;
             } else {
               // Reset checkboxes to unchecked state
@@ -80,7 +80,7 @@ jobs:
               // Add feedback
               commentBody += `\n\n
             > [!Caution]
-            > ❌ Not quite. Copilot works best when your prompt includes context and constraints.
+            > ❌ Not quite. The correct answer is 6.
             `;
 
               // Fail the workflow step
@@ -134,7 +134,7 @@ jobs:
             }
 
             // Determine if the answer is correct
-            let is_correct = (checked_item_value_normalized === "review it, run tests, and validate security before merging");
+            let is_correct = (checked_item_value_normalized === "software development life cycle");
 
             // Remove any existing alerts
             commentBody = removeAlerts(commentBody);
@@ -147,7 +147,7 @@ jobs:
               // Add feedback
               commentBody += `\n\n
             > [!TIP]
-            > ✅ Exactly. Copilot accelerates coding, but you still own review and verification. :copilot:
+            > ✅ Exactly. SDLC stands for Software Development Life Cycle. :copilot:
             `;
             } else {
               // Reset checkboxes to unchecked state
@@ -156,7 +156,7 @@ jobs:
               // Add feedback
               commentBody += `\n\n
             > [!Caution]
-            > ❌ Not quite. Always review generated code, run tests, and confirm security before merge.
+            > ❌ Not quite. SDLC means Software Development Life Cycle.
             `;
 
               // Fail the workflow step
@@ -210,7 +210,7 @@ jobs:
             }
 
             // Determine if the answer is correct
-            let is_correct = (checked_item_value_normalized === "refine the prompt with clearer requirements and ask again");
+            let is_correct = (checked_item_value_normalized === "true");
 
             // Remove any existing alerts
             commentBody = removeAlerts(commentBody);
@@ -223,7 +223,7 @@ jobs:
               // Add feedback
               commentBody += `\n\n
             > [!TIP]
-            > ✅ Nice! Iterating on prompts with better context is a core Copilot skill. :copilot:
+            > ✅ Correct. MCP servers are part of what you should understand for GH-600. :copilot:
             `;
             } else {
               // Reset checkboxes to unchecked state
@@ -232,7 +232,7 @@ jobs:
               // Add feedback
               commentBody += `\n\n
             > [!Caution]
-            > ❌ Not quite. Improve Copilot output by refining your prompt and trying again.
+            > ❌ Not quite. The correct answer is True.
             `;
 
               // Fail the workflow step

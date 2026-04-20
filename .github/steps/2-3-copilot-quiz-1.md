@@ -1,14 +1,9 @@
-## 1. Prompt Craft
+## 1. GH-600 Domains
 
-Which prompt gives Copilot the best chance to return a useful result?
-
-```txt
-You are implementing a login API. Return Node.js code using Express,
-validate inputs, include error handling, and add one integration test.
-```
+What is the correct number of Domains on the GH-600 certification exam?
 
 ### Answers (select one):
 
-- [ ] Ask for code with no context or requirements
-- [ ] Provide clear context, constraints, and expected output
-- [ ] Skip describing language, framework, and validation needs
+- [ ] 4
+- [ ] 6
+- [ ] 8

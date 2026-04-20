@@ -23,41 +23,41 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Find diagram comment
-        id: find-diagram-comment
+      - name: Find match game comment
+        id: find-match-comment
         uses: peter-evans/find-comment@v3
         with:
           issue-number: ${{ env.ISSUE_NUMBER }}
-          body-includes: "## Software Developer Lifecycle"
+          body-includes: "## Ducky Match Game"
           direction: last
 
-      - name: Check diagram order
-        id: check-diagram-order
+      - name: Check match game
+        id: check-match-game
         continue-on-error: true
         uses: actions/github-script@v7
         with:
           script: |
-            const { parseMermaidLabels, checkSDLCOrder } = require('./.github/workflows/check-mermaid-order');
+            const { parseUncoveredCards, checkDuckyMatches } = require('./.github/workflows/check-mermaid-order');
             const { removeAlerts } = require('./.github/workflows/actions-utils');
 
             let commentBody = process.env.COMMENT_BODY;
 
             if (!commentBody) {
-              core.setFailed('No diagram comment found.');
+              core.setFailed('No match game comment found.');
               return;
             }
 
-            const labels = parseMermaidLabels(commentBody);
-            const isCorrect = checkSDLCOrder(labels);
+            const cards = parseUncoveredCards(commentBody);
+            const isCorrect = checkDuckyMatches(cards);
 
             // Remove any existing alerts before adding new feedback
             commentBody = removeAlerts(commentBody);
 
             if (isCorrect) {
-              commentBody += `\n\n> [!TIP]\n> ✅ Perfect! That's the correct Software Developer Lifecycle order! 🐤\n`;
+              commentBody += `\n\n> [!TIP]\n> ✅ Perfect! You uncovered all 6 cards and matched all 3 pairs! 🐤\n`;
             } else {
-              commentBody += `\n\n> [!Caution]\n> ❌ Not quite! Order found: ${labels.join(' → ')}. Try again!\n`;
-              core.setFailed('Diagram order is incorrect.');
+              commentBody += `\n\n> [!Caution]\n> ❌ Not quite. Fill all 6 cards and use each image exactly twice.\n`;
+              core.setFailed('Match game is incorrect.');
             }
 
             await github.rest.issues.updateComment({
@@ -67,8 +67,8 @@ jobs:
               body: commentBody
             });
         env:
-          COMMENT_BODY: ${{ steps.find-diagram-comment.outputs.comment-body }}
-          COMMENT_ID: ${{ steps.find-diagram-comment.outputs.comment-id }}
+          COMMENT_BODY: ${{ steps.find-match-comment.outputs.comment-body }}
+          COMMENT_ID: ${{ steps.find-match-comment.outputs.comment-id }}
 
       - name: Verify all checks passed
         id: verify-checks

@@ -1,138 +1,102 @@
 const assert = require("assert");
-const { parseMermaidLabels, checkSDLCOrder } = require("./check-mermaid-order");
+const {
+  REQUIRED_IMAGES,
+  parseUncoveredCards,
+  checkDuckyMatches,
+} = require("./check-mermaid-order");
 
 // Manually run these tests in the CLI:
 // node .github/workflows/check-mermaid-order.test.js
 
-// parseMermaidLabels: empty string returns empty array
+const [IMAGE_1, IMAGE_2, IMAGE_3] = REQUIRED_IMAGES;
+
+// parseUncoveredCards: empty string returns empty array
 (() => {
-  assert.deepStrictEqual(parseMermaidLabels(""), []);
+  assert.deepStrictEqual(parseUncoveredCards(""), []);
 })();
 
-// parseMermaidLabels: no mermaid block returns empty array
+// parseUncoveredCards: missing section returns empty array
 (() => {
-  assert.deepStrictEqual(parseMermaidLabels("some text without mermaid"), []);
+  assert.deepStrictEqual(parseUncoveredCards("some text without cards"), []);
 })();
 
-// parseMermaidLabels: extracts labels in order from chain syntax
+// parseUncoveredCards: extracts six cards in order
 (() => {
-  const text =
-    "```mermaid\ngraph LR\n    A[ANALYSIS] --> B[DESIGN] --> C[DEVELOPMENT] --> D[TESTING] --> E[DEPLOYMENT] --> F[MAINTENANCE]\n```";
-  const labels = parseMermaidLabels(text);
-  assert.deepStrictEqual(labels, [
-    "ANALYSIS",
-    "DESIGN",
-    "DEVELOPMENT",
-    "TESTING",
-    "DEPLOYMENT",
-    "MAINTENANCE",
-  ]);
+  const text = `
+### Uncovered Cards
+
+- Card 1: ${IMAGE_1}
+- Card 2: ${IMAGE_2}
+- Card 3: ${IMAGE_3}
+- Card 4: ${IMAGE_1}
+- Card 5: ${IMAGE_2}
+- Card 6: ${IMAGE_3}
+`;
+  const cards = parseUncoveredCards(text);
+  assert.deepStrictEqual(cards, [IMAGE_1, IMAGE_2, IMAGE_3, IMAGE_1, IMAGE_2, IMAGE_3]);
 })();
 
-// parseMermaidLabels: extracts labels in order from scrambled chain
+// parseUncoveredCards: non-string input returns empty array
 (() => {
-  const text =
-    "```mermaid\ngraph LR\n    A[ANALYSIS] --> B[TESTING] --> C[DESIGN] --> D[DEPLOYMENT] --> E[MAINTENANCE] --> F[DEVELOPMENT]\n```";
-  const labels = parseMermaidLabels(text);
-  assert.deepStrictEqual(labels, [
-    "ANALYSIS",
-    "TESTING",
-    "DESIGN",
-    "DEPLOYMENT",
-    "MAINTENANCE",
-    "DEVELOPMENT",
-  ]);
+  assert.deepStrictEqual(parseUncoveredCards(null), []);
+  assert.deepStrictEqual(parseUncoveredCards(undefined), []);
 })();
 
-// parseMermaidLabels: deduplicates repeated labels (multi-line connection syntax)
-(() => {
-  const text =
-    "```mermaid\ngraph LR\n    A[ANALYSIS] --> B[DESIGN]\n    B[DESIGN] --> C[DEVELOPMENT]\n```";
-  const labels = parseMermaidLabels(text);
-  assert.deepStrictEqual(labels, ["ANALYSIS", "DESIGN", "DEVELOPMENT"]);
-})();
-
-// parseMermaidLabels: handles lowercase labels by uppercasing
-(() => {
-  const text =
-    "```mermaid\ngraph LR\n    A[analysis] --> B[design]\n```";
-  const labels = parseMermaidLabels(text);
-  assert.deepStrictEqual(labels, ["ANALYSIS", "DESIGN"]);
-})();
-
-// parseMermaidLabels: non-string input returns empty array
-(() => {
-  assert.deepStrictEqual(parseMermaidLabels(null), []);
-  assert.deepStrictEqual(parseMermaidLabels(undefined), []);
-})();
-
-// checkSDLCOrder: correct order returns true
+// checkDuckyMatches: raw URLs with pairs returns true
 (() => {
   assert.strictEqual(
-    checkSDLCOrder([
-      "ANALYSIS",
-      "DESIGN",
-      "DEVELOPMENT",
-      "TESTING",
-      "DEPLOYMENT",
-      "MAINTENANCE",
+    checkDuckyMatches([IMAGE_1, IMAGE_2, IMAGE_3, IMAGE_1, IMAGE_2, IMAGE_3]),
+    true
+  );
+})();
+
+// checkDuckyMatches: supports markdown image syntax
+(() => {
+  assert.strictEqual(
+    checkDuckyMatches([
+      `![one](${IMAGE_1})`,
+      `![two](${IMAGE_2})`,
+      `![three](${IMAGE_3})`,
+      `![one again](${IMAGE_1})`,
+      `![two again](${IMAGE_2})`,
+      `![three again](${IMAGE_3})`,
     ]),
     true
   );
 })();
 
-// checkSDLCOrder: scrambled order returns false
+// checkDuckyMatches: wrong number of cards returns false
+(() => {
+  assert.strictEqual(checkDuckyMatches([IMAGE_1, IMAGE_2, IMAGE_3]), false);
+})();
+
+// checkDuckyMatches: wrong distribution returns false
 (() => {
   assert.strictEqual(
-    checkSDLCOrder([
-      "ANALYSIS",
-      "TESTING",
-      "DESIGN",
-      "DEPLOYMENT",
-      "MAINTENANCE",
-      "DEVELOPMENT",
-    ]),
+    checkDuckyMatches([IMAGE_1, IMAGE_1, IMAGE_1, IMAGE_2, IMAGE_2, IMAGE_3]),
     false
   );
 })();
 
-// checkSDLCOrder: wrong number of labels returns false
+// checkDuckyMatches: unknown image returns false
 (() => {
   assert.strictEqual(
-    checkSDLCOrder(["ANALYSIS", "DESIGN", "DEVELOPMENT"]),
+    checkDuckyMatches([IMAGE_1, IMAGE_2, IMAGE_3, IMAGE_1, IMAGE_2, "https://example.com/x.png"]),
     false
   );
 })();
 
-// checkSDLCOrder: empty array returns false
+// checkDuckyMatches: hidden card value returns false
 (() => {
-  assert.strictEqual(checkSDLCOrder([]), false);
+  assert.strictEqual(
+    checkDuckyMatches([IMAGE_1, IMAGE_2, IMAGE_3, IMAGE_1, IMAGE_2, "`HIDDEN`"]),
+    false
+  );
 })();
 
-// checkSDLCOrder: non-array input returns false
+// checkDuckyMatches: non-array input returns false
 (() => {
-  assert.strictEqual(checkSDLCOrder(null), false);
-})();
-
-// Full round-trip: correct diagram passes
-(() => {
-  const text = `Some intro text
-
-\`\`\`mermaid
-graph LR
-    A[ANALYSIS] --> B[DESIGN] --> C[DEVELOPMENT] --> D[TESTING] --> E[DEPLOYMENT] --> F[MAINTENANCE]
-\`\`\`
-
-Some trailing text`;
-  const labels = parseMermaidLabels(text);
-  assert.strictEqual(checkSDLCOrder(labels), true);
-})();
-
-// Full round-trip: scrambled diagram fails
-(() => {
-  const text = `\`\`\`mermaid\ngraph LR\n    A[ANALYSIS] --> B[TESTING] --> C[DESIGN] --> D[DEPLOYMENT] --> E[MAINTENANCE] --> F[DEVELOPMENT]\n\`\`\``;
-  const labels = parseMermaidLabels(text);
-  assert.strictEqual(checkSDLCOrder(labels), false);
+  assert.strictEqual(checkDuckyMatches(null), false);
 })();
 
 // If nothing threw an exception, all tests passed
