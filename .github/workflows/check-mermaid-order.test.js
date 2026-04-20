@@ -108,7 +108,7 @@ const [IMAGE_1, IMAGE_2, IMAGE_3] = REQUIRED_IMAGES;
   );
 })();
 
-// checkDuckyMatches: plain text containing a valid local image path returns true
+// checkDuckyMatches: plain text containing a valid local image path returns false
 (() => {
   assert.strictEqual(
     checkDuckyMatches([
@@ -119,7 +119,7 @@ const [IMAGE_1, IMAGE_2, IMAGE_3] = REQUIRED_IMAGES;
       IMAGE_2,
       IMAGE_3,
     ]),
-    true
+    false
   );
 })();
 

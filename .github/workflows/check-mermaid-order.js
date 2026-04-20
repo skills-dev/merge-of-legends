@@ -30,13 +30,14 @@ function parseUncoveredCards(text) {
 
 function extractImageUrls(cardValue) {
   if (typeof cardValue !== "string") return [];
-  const markdownImageMatches = [
-    ...cardValue.matchAll(/!\[[^\]]*\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g),
-  ].map((match) => match[1]);
-  const urlMatches = cardValue.match(/https?:\/\/[^\s)>"'`]+/g) || [];
-  const localPathMatches =
-    cardValue.match(/(?:\.\.?\/)?(?:[\w.-]+\/)*[\w.-]+\.(?:png|jpe?g|gif|webp|svg)/gi) || [];
-  return [...new Set([...markdownImageMatches, ...urlMatches, ...localPathMatches])];
+  const value = cardValue.trim();
+  const markdownImageMatch = value.match(/^!\[[^\]]*]\(([^)\s]+)(?:\s+"[^"]*")?\)$/);
+  if (markdownImageMatch) return [markdownImageMatch[1]];
+  if (/^https?:\/\/[^\s)>"'`]+$/.test(value)) return [value];
+  if (/^(?:\.\.?\/)?(?:[\w.-]+\/)*[\w.-]+\.(?:png|jpe?g|gif|webp|svg)$/i.test(value)) {
+    return [value];
+  }
+  return [];
 }
 
 /**
