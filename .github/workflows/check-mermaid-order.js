@@ -28,10 +28,9 @@ function parseUncoveredCards(text) {
   return cards;
 }
 
-function extractKnownImageUrls(cardValue) {
+function extractImageUrls(cardValue) {
   if (typeof cardValue !== "string") return [];
-  const urls = cardValue.match(/https?:\/\/[^\s)>"'`]+/g) || [];
-  return urls.filter((url) => REQUIRED_IMAGES.includes(url));
+  return cardValue.match(/https?:\/\/[^\s)>"'`]+/g) || [];
 }
 
 /**
@@ -46,8 +45,9 @@ function checkDuckyMatches(cards) {
   const counts = Object.fromEntries(REQUIRED_IMAGES.map((url) => [url, 0]));
 
   for (const card of cards) {
-    const urls = extractKnownImageUrls(card);
+    const urls = extractImageUrls(card);
     if (urls.length !== 1) return false;
+    if (!REQUIRED_IMAGES.includes(urls[0])) return false;
     counts[urls[0]] += 1;
   }
 
