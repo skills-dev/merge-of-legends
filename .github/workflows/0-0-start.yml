@@ -126,10 +126,13 @@ jobs:
           issue-number: ${{ needs.resolve_issue.outputs.issue-number }}
           file: exercise-toolkit/markdown-templates/step-feedback/watching-for-progress.md
 
-      - name: Reenable to allow restarting, and enable challenge picker workflow
+      - name: Reenable restart workflows and challenge picker
         run: |
           gh workflow enable "0-0 Start" || true
           gh workflow enable "0-1 Pick" || true
+          gh workflow enable "1-1 Mona Start" || true
+          gh workflow enable "2-1 Copilot Start" || true
+          gh workflow enable "3-1 Ducky Start" || true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
