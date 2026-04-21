@@ -57,7 +57,7 @@ jobs:
               'copilot - advanced'
             ];
             if (!validChoices.includes(checked_item_value)) {
-              core.info(`Ignoring unchecked option: ${checked_item_value}`);
+              core.info(`Ignoring invalid option: ${checked_item_value}`);
               core.setOutput('checked-item-value', '');
               return;
             }
