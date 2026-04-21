@@ -12,6 +12,11 @@ permissions:
   actions: write
   issues: write
 
+env:
+  EXERCISE_TITLE: "Merge of Legends"
+  ISSUE_TITLE_PREFIX: "Quest: "
+  ISSUE_BODY: "Choose your path with Ducky, Mona, or Copilot to begin the Merge of Legends quest."
+
 jobs:
   find_open_quest_issue:
     name: Find open quest issue
@@ -65,12 +70,25 @@ jobs:
     name: Start Exercise
     needs: [find_open_quest_issue]
     if: needs.find_open_quest_issue.outputs.should-create == 'true'
-    uses: skills/exercise-toolkit/.github/workflows/start-exercise.yml@v0.9.3
-    with:
-      exercise-title: "Merge of Legends"
-      issue-title-prefix: "Quest: "
-      intro-message: "Choose your path with Ducky, Mona, or Copilot to begin the Merge of Legends quest."
-    secrets: inherit
+    runs-on: ubuntu-latest
+    outputs:
+      issue-number: ${{ steps.create-issue.outputs.issue-number }}
+      issue-url: ${{ steps.create-issue.outputs.issue-url }}
+    steps:
+      - name: Create quest issue
+        id: create-issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: issue } = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `${process.env.ISSUE_TITLE_PREFIX}${process.env.EXERCISE_TITLE}`,
+              body: process.env.ISSUE_BODY,
+            });
+
+            core.setOutput("issue-number", String(issue.number));
+            core.setOutput("issue-url", issue.html_url);
 
   cleanup_duplicate_quest_issues:
     name: Close duplicate quest issues
@@ -153,19 +171,6 @@ jobs:
         with:
           issue-number: ${{ needs.resolve_issue.outputs.issue-number }}
           file: ".github/steps/0-0-start.md"
-
-      - name: Get response templates
-        uses: actions/checkout@v6
-        with:
-          repository: skills/exercise-toolkit
-          path: exercise-toolkit
-          ref: v0.9.3
-
-      - name: Create comment - watching for progress
-        uses: GrantBirki/comment@v2.1.1
-        with:
-          issue-number: ${{ needs.resolve_issue.outputs.issue-number }}
-          file: exercise-toolkit/markdown-templates/step-feedback/watching-for-progress.md
 
       - name: Reenable restart workflows and challenge picker
         run: |
