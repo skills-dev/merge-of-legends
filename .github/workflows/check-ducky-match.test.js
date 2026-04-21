@@ -3,10 +3,10 @@ const {
   REQUIRED_IMAGES,
   parseUncoveredCards,
   checkDuckyMatches,
-} = require("./check-mermaid-order");
+} = require("./check-ducky-match");
 
 // Manually run these tests in the CLI:
-// node .github/workflows/check-mermaid-order.test.js
+// node .github/workflows/check-ducky-match.test.js
 
 const [IMAGE_1, IMAGE_2, IMAGE_3] = REQUIRED_IMAGES;
 

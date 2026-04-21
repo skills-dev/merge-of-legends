@@ -37,7 +37,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const { parseUncoveredCards, checkDuckyMatches } = require('./.github/workflows/check-mermaid-order');
+            const { parseUncoveredCards, checkDuckyMatches } = require('./.github/workflows/check-ducky-match');
             const { removeAlerts } = require('./.github/workflows/actions-utils');
 
             let commentBody = process.env.COMMENT_BODY;
