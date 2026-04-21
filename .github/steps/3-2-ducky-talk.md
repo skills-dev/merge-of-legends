@@ -5,11 +5,20 @@
 Match the pairs by uncovering all 6 cards.
 
 **Edit this comment** so each card contains one image URL.  
-Use these three images, with **each image used exactly 2 times**:
+Use these three image URLs, with **each image used exactly 2 times**.
+Preview images are shown below for reference; for card values, use the exact URLs listed under them:
 
-<img width="220" alt="Oracle of Predictive Spells" src="https://github.com/user-attachments/assets/ef33b2a2-0156-4aa8-b28e-9a39597b4197" />
-<img width="220" alt="Second image option for the Ducky Match Game" src="https://github.com/user-attachments/assets/0c56a61d-f06c-44a4-842b-ec93fb764a79" />
-<img width="220" alt="Third image option for the Ducky Match Game" src="https://github.com/user-attachments/assets/e9a07088-41fc-499c-971f-b175884a0711" />
+<img width="220" alt="Ducky intro" src="../images/ducky-intro.png" />
+<img width="220" alt="Mona intro" src="../images/mona-intro.png" />
+<img width="220" alt="Copilot intro" src="../images/copilot-intro.png" />
+
+`https://github.com/user-attachments/assets/c9d4a45b-5e71-4d34-8aab-1cb28ecca8cb`
+`https://github.com/user-attachments/assets/062f5275-7e33-4355-85ef-fc958433df81`
+`https://github.com/user-attachments/assets/37302691-a101-4436-8336-7c0c991ad05d`
+
+Example format:
+
+`![Ducky image](https://github.com/user-attachments/assets/c9d4a45b-5e71-4d34-8aab-1cb28ecca8cb)`
 
 ### Uncovered Cards
 

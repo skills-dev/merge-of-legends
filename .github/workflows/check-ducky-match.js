@@ -1,7 +1,7 @@
 const REQUIRED_IMAGES = [
-  "https://github.com/user-attachments/assets/ef33b2a2-0156-4aa8-b28e-9a39597b4197",
-  "https://github.com/user-attachments/assets/0c56a61d-f06c-44a4-842b-ec93fb764a79",
-  "https://github.com/user-attachments/assets/e9a07088-41fc-499c-971f-b175884a0711",
+  "https://github.com/user-attachments/assets/c9d4a45b-5e71-4d34-8aab-1cb28ecca8cb",
+  "https://github.com/user-attachments/assets/062f5275-7e33-4355-85ef-fc958433df81",
+  "https://github.com/user-attachments/assets/37302691-a101-4436-8336-7c0c991ad05d",
 ];
 
 /**
@@ -30,7 +30,14 @@ function parseUncoveredCards(text) {
 
 function extractImageUrls(cardValue) {
   if (typeof cardValue !== "string") return [];
-  return cardValue.match(/https?:\/\/[^\s)>"'`]+/g) || [];
+  const value = cardValue.trim();
+  const markdownImageMatch = value.match(/^!\[[^\]]*]\(([^)\s]+)(?:\s+"[^"]*")?\)$/);
+  if (markdownImageMatch) return [markdownImageMatch[1]];
+  if (/^https?:\/\/[^\s)>"'`]+$/.test(value)) return [value];
+  if (/^(?:\.\.?\/)?(?:[\w.-]+\/)*[\w.-]+\.(?:png|jpe?g|gif|webp|svg)$/i.test(value)) {
+    return [value];
+  }
+  return [];
 }
 
 /**
