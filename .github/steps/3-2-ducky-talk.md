@@ -4,21 +4,23 @@
 
 Match the pairs by uncovering all 6 cards.
 
-**Edit this comment** so each card contains one image URL.  
-Use these three image URLs, with **each image used exactly 2 times**.
-Preview images are shown below for reference; for card values, use the exact URLs listed under them:
+**Edit this comment** so each card contains one markdown image value in this format: `![Name](path)`  
+Use these three repository image paths, with **each image used exactly 2 times**.
+Preview images are shown below for reference:
 
 <img width="220" alt="Ducky intro" src="../images/ducky-intro.png" />
 <img width="220" alt="Mona intro" src="../images/mona-intro.png" />
 <img width="220" alt="Copilot intro" src="../images/copilot-intro.png" />
 
-`https://github.com/user-attachments/assets/c9d4a45b-5e71-4d34-8aab-1cb28ecca8cb`
-`https://github.com/user-attachments/assets/062f5275-7e33-4355-85ef-fc958433df81`
-`https://github.com/user-attachments/assets/37302691-a101-4436-8336-7c0c991ad05d`
+`.github/images/ducky-intro.png`
+`.github/images/mona-intro.png`
+`.github/images/copilot-intro.png`
 
 Example format:
 
-`![Ducky image](https://github.com/user-attachments/assets/c9d4a45b-5e71-4d34-8aab-1cb28ecca8cb)`
+`![Ducky](.github/images/ducky-intro.png)`
+`![Mona](.github/images/mona-intro.png)`
+`![Copilot](.github/images/copilot-intro.png)`
 
 ### Uncovered Cards
 
@@ -32,7 +34,7 @@ Example format:
 <details>
 <summary>Having trouble? 🤷</summary><br/>
 
-> - 💡 **Tip:** Replace each `HIDDEN` value with one image URL.
+> - 💡 **Tip:** Replace each `HIDDEN` value with one markdown image like `![Ducky](.github/images/ducky-intro.png)`.
 > - 💡 **Tip:** The check passes only when all 6 cards are filled and each image appears exactly twice.
 
 </details>
