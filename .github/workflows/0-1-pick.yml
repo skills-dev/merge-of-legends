@@ -1,7 +1,7 @@
 name: 0-1 Pick
 
 on:
-  issues:
+  issue_comment:
     types: [edited]
 
 permissions:
@@ -50,13 +50,23 @@ jobs:
             // Trim and make lowercase
             checked_item_value = checked_item_value.trim().toLowerCase();
 
-            // Log the checked item's value
-            console.log(`Checked item value: ${checked_item_value}`);
+            // Only accept known path options
+            const validChoices = [
+              'ducky - beginner',
+              'mona - intermediate',
+              'copilot - advanced'
+            ];
+            if (!validChoices.includes(checked_item_value)) {
+              core.info(`Ignoring invalid option: ${checked_item_value}`);
+              core.setOutput('checked-item-value', '');
+              return;
+            }
 
-            // Return the checked item's value
+            // Log and return the checked item's value
+            console.log(`Checked item value: ${checked_item_value}`);
             core.setOutput('checked-item-value', checked_item_value);
         env:
-          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_BODY: ${{ github.event.comment.body }}
 
   disable_checkboxes:
     name: Disable Checkboxes
@@ -65,11 +75,11 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
-      - name: Disable Checkboxes in Issue Body
+      - name: Disable Checkboxes in Comment Body
         uses: actions/github-script@v7
         with:
           script: |
-            // Get the updated issue body from the event payload
+            // Get the updated comment body from the event payload
             const issueBody = process.env.ISSUE_BODY || '';
 
             // Disable all checkboxes in the issue body
@@ -78,14 +88,14 @@ jobs:
               return `${emoji} ${label}`;
             });
 
-            // Update the issue with the modified body, retrying on 5xx errors
+            // Update the comment with the modified body, retrying on 5xx errors
             let lastError;
             for (let attempt = 1; attempt <= 3; attempt++) {
               try {
-                await github.rest.issues.update({
+                await github.rest.issues.updateComment({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  issue_number: process.env.ISSUE_NUMBER,
+                  comment_id: process.env.COMMENT_ID,
                   body: updatedBody
                 });
                 return;
@@ -97,8 +107,8 @@ jobs:
             }
             throw lastError;
         env:
-          ISSUE_BODY: ${{ github.event.issue.body }}
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_BODY: ${{ github.event.comment.body }}
+          COMMENT_ID: ${{ github.event.comment.id }}
 
   # Trigger the appropriate workflow based on the selected option
   mona:
