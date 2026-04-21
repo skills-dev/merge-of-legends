@@ -11,19 +11,14 @@ permissions:
   actions: write
   issues: write
 
-env:
-  EXERCISE_TITLE: "Merge of Legends"
-  ISSUE_TITLE_PREFIX: "Quest: "
-  INTRO_MESSAGE: "Choose your path with Ducky, Mona, or Copilot to begin the Merge of Legends quest."
-
 jobs:
   start_exercise:
     name: Start Exercise
     uses: skills/exercise-toolkit/.github/workflows/start-exercise.yml@v0.9.1
     with:
-      exercise-title: ${{ env.EXERCISE_TITLE }}
-      issue-title-prefix: ${{ env.ISSUE_TITLE_PREFIX }}
-      intro-message: ${{ env.INTRO_MESSAGE }}
+      exercise-title: "Merge of Legends"
+      issue-title-prefix: "Quest: "
+      intro-message: "Choose your path with Ducky, Mona, or Copilot to begin the Merge of Legends quest."
     secrets: inherit
 
   post_challenge_picker:
