@@ -1,7 +1,7 @@
 const REQUIRED_IMAGES = [
-  "https://github.com/user-attachments/assets/c9d4a45b-5e71-4d34-8aab-1cb28ecca8cb",
-  "https://github.com/user-attachments/assets/062f5275-7e33-4355-85ef-fc958433df81",
-  "https://github.com/user-attachments/assets/37302691-a101-4436-8336-7c0c991ad05d",
+  ".github/images/ducky-intro.png",
+  ".github/images/mona-intro.png",
+  ".github/images/copilot-intro.png",
 ];
 
 /**
@@ -33,10 +33,6 @@ function extractImageUrls(cardValue) {
   const value = cardValue.trim();
   const markdownImageMatch = value.match(/^!\[[^\]]*]\(([^)\s]+)(?:\s+"[^"]*")?\)$/);
   if (markdownImageMatch) return [markdownImageMatch[1]];
-  if (/^https?:\/\/[^\s)>"'`]+$/.test(value)) return [value];
-  if (/^(?:\.\.?\/)?(?:[\w.-]+\/)*[\w.-]+\.(?:png|jpe?g|gif|webp|svg)$/i.test(value)) {
-    return [value];
-  }
   return [];
 }
 

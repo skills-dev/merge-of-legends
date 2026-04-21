@@ -13,8 +13,49 @@ permissions:
   issues: write
 
 jobs:
+  find_open_quest_issue:
+    name: Find open quest issue
+    runs-on: ubuntu-latest
+    outputs:
+      issue-number: ${{ steps.find-open.outputs.issue-number }}
+      issue-url: ${{ steps.find-open.outputs.issue-url }}
+      should-create: ${{ steps.find-open.outputs.should-create }}
+    steps:
+      - name: Find existing open quest issue
+        id: find-open
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const titlePrefix = "Quest: ";
+            const { owner, repo } = context.repo;
+
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner,
+              repo,
+              state: "open",
+              per_page: 100,
+            });
+
+            const openQuestIssue = issues
+              .filter((issue) => !issue.pull_request && issue.title.startsWith(titlePrefix))
+              .sort((a, b) => a.number - b.number)[0];
+
+            if (openQuestIssue) {
+              core.info(`Reusing open quest issue #${openQuestIssue.number}`);
+              core.setOutput("issue-number", String(openQuestIssue.number));
+              core.setOutput("issue-url", openQuestIssue.html_url);
+              core.setOutput("should-create", "false");
+            } else {
+              core.info("No open quest issue found. A new one will be created.");
+              core.setOutput("issue-number", "");
+              core.setOutput("issue-url", "");
+              core.setOutput("should-create", "true");
+            }
+
   start_exercise:
     name: Start Exercise
+    needs: [find_open_quest_issue]
+    if: needs.find_open_quest_issue.outputs.should-create == 'true'
     uses: skills/exercise-toolkit/.github/workflows/start-exercise.yml@v0.9.3
     with:
       exercise-title: "Merge of Legends"
@@ -22,10 +63,44 @@ jobs:
       intro-message: "Choose your path with Ducky, Mona, or Copilot to begin the Merge of Legends quest."
     secrets: inherit
 
+  resolve_issue:
+    name: Resolve quest issue
+    runs-on: ubuntu-latest
+    needs: [find_open_quest_issue, start_exercise]
+    outputs:
+      issue-number: ${{ steps.resolve.outputs.issue-number }}
+      issue-url: ${{ steps.resolve.outputs.issue-url }}
+    steps:
+      - name: Resolve issue number and URL
+        id: resolve
+        uses: actions/github-script@v7
+        env:
+          EXISTING_ISSUE_NUMBER: ${{ needs.find_open_quest_issue.outputs.issue-number }}
+          EXISTING_ISSUE_URL: ${{ needs.find_open_quest_issue.outputs.issue-url }}
+          NEW_ISSUE_NUMBER: ${{ needs.start_exercise.outputs.issue-number }}
+          NEW_ISSUE_URL: ${{ needs.start_exercise.outputs.issue-url }}
+        with:
+          script: |
+            const existingIssueNumber = process.env.EXISTING_ISSUE_NUMBER || "";
+            const existingIssueUrl = process.env.EXISTING_ISSUE_URL || "";
+            const newIssueNumber = process.env.NEW_ISSUE_NUMBER || "";
+            const newIssueUrl = process.env.NEW_ISSUE_URL || "";
+
+            const issueNumber = existingIssueNumber || newIssueNumber;
+            const issueUrl = existingIssueUrl || newIssueUrl;
+
+            if (!issueNumber || !issueUrl) {
+              core.setFailed("Failed to resolve quest issue.");
+              return;
+            }
+
+            core.setOutput("issue-number", issueNumber);
+            core.setOutput("issue-url", issueUrl);
+
   post_challenge_picker:
     name: Post challenge picker
     runs-on: ubuntu-latest
-    needs: [start_exercise]
+    needs: [resolve_issue]
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -35,7 +110,7 @@ jobs:
       - name: Create comment - pick challenge
         uses: GrantBirki/comment@v2.1.1
         with:
-          issue-number: ${{ needs.start_exercise.outputs.issue-number }}
+          issue-number: ${{ needs.resolve_issue.outputs.issue-number }}
           file: ".github/steps/0-0-start.md"
 
       - name: Get response templates
@@ -48,7 +123,7 @@ jobs:
       - name: Create comment - watching for progress
         uses: GrantBirki/comment@v2.1.1
         with:
-          issue-number: ${{ needs.start_exercise.outputs.issue-number }}
+          issue-number: ${{ needs.resolve_issue.outputs.issue-number }}
           file: exercise-toolkit/markdown-templates/step-feedback/watching-for-progress.md
 
       - name: Reenable to allow restarting, and enable challenge picker workflow
@@ -65,4 +140,4 @@ jobs:
           issue-number: ${{ github.event.issue.number }}
           file: ".github/steps/x-close-with-next-link.md"
           vars: |
-            next_issue_url: ${{ needs.start_exercise.outputs.issue-url }}
+            next_issue_url: ${{ needs.resolve_issue.outputs.issue-url }}

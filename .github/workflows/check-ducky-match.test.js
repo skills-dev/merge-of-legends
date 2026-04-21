@@ -42,10 +42,17 @@ const [IMAGE_1, IMAGE_2, IMAGE_3] = REQUIRED_IMAGES;
   assert.deepStrictEqual(parseUncoveredCards(undefined), []);
 })();
 
-// checkDuckyMatches: raw image URLs with pairs returns true
+// checkDuckyMatches: required markdown image entries with pairs returns true
 (() => {
   assert.strictEqual(
-    checkDuckyMatches([IMAGE_1, IMAGE_2, IMAGE_3, IMAGE_1, IMAGE_2, IMAGE_3]),
+    checkDuckyMatches([
+      `![Ducky](${IMAGE_1})`,
+      `![Mona](${IMAGE_2})`,
+      `![Copilot](${IMAGE_3})`,
+      `![Ducky](${IMAGE_1})`,
+      `![Mona](${IMAGE_2})`,
+      `![Copilot](${IMAGE_3})`,
+    ]),
     true
   );
 })();
@@ -97,6 +104,14 @@ const [IMAGE_1, IMAGE_2, IMAGE_3] = REQUIRED_IMAGES;
       IMAGE_2,
       `${IMAGE_3} https://example.com/x.png`,
     ]),
+    false
+  );
+})();
+
+// checkDuckyMatches: bare local image path (no markdown image syntax) returns false
+(() => {
+  assert.strictEqual(
+    checkDuckyMatches([IMAGE_1, IMAGE_2, IMAGE_3, IMAGE_1, IMAGE_2, IMAGE_3]),
     false
   );
 })();
