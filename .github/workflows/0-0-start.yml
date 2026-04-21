@@ -14,7 +14,7 @@ permissions:
 jobs:
   start_exercise:
     name: Start Exercise
-    uses: skills/exercise-toolkit/.github/workflows/start-exercise.yml@v0.9.1
+    uses: skills/exercise-toolkit/.github/workflows/start-exercise.yml@v0.9.3
     with:
       exercise-title: "Merge of Legends"
       issue-title-prefix: "Quest: "
@@ -42,7 +42,7 @@ jobs:
         with:
           repository: skills/exercise-toolkit
           path: exercise-toolkit
-          ref: v0.9.1
+          ref: v0.9.3
 
       - name: Create comment - watching for progress
         uses: GrantBirki/comment@v2.1.1

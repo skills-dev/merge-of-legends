@@ -134,7 +134,7 @@ jobs:
     name: Close challenge issue
     needs: [check_step_work, finish_challenge]
     if: needs.check_step_work.outputs.all_passed == 'true'
-    uses: skills/exercise-toolkit/.github/workflows/finish-exercise.yml@v0.9.1
+    uses: skills/exercise-toolkit/.github/workflows/finish-exercise.yml@v0.9.3
     with:
       issue-url: ${{ github.event.issue.html_url }}
       exercise-title: "Merge of Legends"
