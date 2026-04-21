@@ -15,7 +15,11 @@ permissions:
 env:
   EXERCISE_TITLE: "Merge of Legends"
   ISSUE_TITLE_PREFIX: "Quest: "
-  ISSUE_BODY: "Choose your path with Ducky, Mona, or Copilot to begin the Merge of Legends quest."
+  ISSUE_BODY: |-
+    Choose your path with Ducky, Mona, or Copilot to begin the Merge of Legends quest below
+    > [!WARNING]
+    > DO NOT CLICK **Create sub-issue**.
+    > Only check one challenge box below.
 
 jobs:
   find_open_quest_issue:
