@@ -26,8 +26,17 @@ function getServerHostname() {
 }
 
 function getRequiredImageFromPathname(pathname, prefixLength) {
-  const imagePath = pathname.slice(prefixLength).replace(/^\/+/, "");
-  return REQUIRED_IMAGES.find((requiredPath) => imagePath === requiredPath) || null;
+  const requiredPath = REQUIRED_IMAGES.find((path) => pathname.endsWith(`/${path}`));
+  if (!requiredPath) return null;
+
+  const refAndPath = pathname.slice(prefixLength);
+  const imageStart = refAndPath.lastIndexOf(`/${requiredPath}`);
+  if (imageStart === -1) return null;
+
+  const ref = refAndPath.slice(0, imageStart).replace(/^\/+|\/+$/g, "");
+  if (!ref) return null;
+
+  return requiredPath;
 }
 
 function matchRepositoryImageUrl(url) {
@@ -51,9 +60,7 @@ function matchRepositoryImageUrl(url) {
     parsedUrl.hostname === "raw.githubusercontent.com" &&
     pathname.startsWith(rawPrefix)
   ) {
-    const refSeparator = pathname.indexOf("/", rawPrefix.length);
-    if (refSeparator === -1) return null;
-    return getRequiredImageFromPathname(pathname, refSeparator + 1);
+    return getRequiredImageFromPathname(pathname, rawPrefix.length);
   }
 
   const githubPrefix = `/${repository.owner}/${repository.repo}/`;
@@ -61,10 +68,8 @@ function matchRepositoryImageUrl(url) {
     const rest = pathname.slice(githubPrefix.length);
 
     if (rest.startsWith("raw/") || rest.startsWith("blob/")) {
-      const modeSeparator = rest.indexOf("/");
-      const refSeparator = rest.indexOf("/", modeSeparator + 1);
-      if (refSeparator === -1) return null;
-      return getRequiredImageFromPathname(rest, refSeparator + 1);
+      const modePrefixLength = rest.startsWith("raw/") ? 4 : 5;
+      return getRequiredImageFromPathname(rest, modePrefixLength);
     }
   }
 
