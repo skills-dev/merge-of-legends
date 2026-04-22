@@ -1,6 +1,6 @@
 ## Ducky Match Game
 
-<img width="70%" alt="To reflect like me is to be like me. But you are you, not a reflection of yourself. To understand my essence, you must listen first and speak last. Your test has already begun." src="https://raw.githubusercontent.com/skills-dev/merge-of-legends/main/.github/images/ducky-reflect-quote.png" />
+<img width="70%" alt="To reflect like me is to be like me. But you are you, not a reflection of yourself. To understand my essence, you must listen first and speak last. Your test has already begun." src=".github/images/ducky-reflect-quote.png" />
 
 Match the pairs by uncovering all 6 cards.
 
@@ -8,9 +8,9 @@ Match the pairs by uncovering all 6 cards.
 Use these three repository image paths, with **each image used exactly 2 times**.
 Preview images are shown below for reference:
 
-<img width="220" alt="Ducky intro" src="https://raw.githubusercontent.com/skills-dev/merge-of-legends/main/.github/images/ducky-intro.png" />
-<img width="220" alt="Mona intro" src="https://raw.githubusercontent.com/skills-dev/merge-of-legends/main/.github/images/mona-intro.png" />
-<img width="220" alt="Copilot intro" src="https://raw.githubusercontent.com/skills-dev/merge-of-legends/main/.github/images/copilot-intro.png" />
+<img width="220" alt="Ducky intro" src=".github/images/ducky-intro.png" />
+<img width="220" alt="Mona intro" src=".github/images/mona-intro.png" />
+<img width="220" alt="Copilot intro" src=".github/images/copilot-intro.png" />
 
 `.github/images/ducky-intro.png`
 `.github/images/mona-intro.png`
