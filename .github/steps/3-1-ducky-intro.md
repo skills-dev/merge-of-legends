@@ -4,17 +4,17 @@
   <table>
     <tr>
       <td align="center">
-        <img width="200px" alt="Ducky" src=".github/images/ducky-intro.png" /><br/>
+        <img width="200px" alt="Ducky" src="https://raw.githubusercontent.com/<org>/<repo>/<branch>/.github/images/ducky-intro.png" /><br/>
         <strong>🐤 Ducky</strong><br/>
         Path to Software Enlightenment
       </td>
       <td align="center">
-        <img width="200px" alt="Mona" src=".github/images/mona-intro.png" /><br/>
+        <img width="200px" alt="Mona" src="https://raw.githubusercontent.com/<org>/<repo>/<branch>/.github/images/mona-intro.png" /><br/>
         <strong>:octocat: Mona</strong><br/>
         Guardian of the Archives
       </td>
       <td align="center">
-        <img width="200px" alt="Copilot" src=".github/images/copilot-intro.png" /><br/>
+        <img width="200px" alt="Copilot" src="https://raw.githubusercontent.com/<org>/<repo>/<branch>/.github/images/copilot-intro.png" /><br/>
         <strong>:copilot: Copilot</strong><br/>
         Practice the Flow of Prompting
       </td>
