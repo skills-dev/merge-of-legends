@@ -89,7 +89,7 @@ jobs:
         with:
           script: |
             // Show repo where issue will be created
-            console.log(`Creating issue in repository:${ context.repo.owner }/${ context.repo.repo }`);
+            console.log(`Creating issue in repository: ${context.repo.owner}/${context.repo.repo}`);
 
             // Create the issue
             const { data: issue } = await github.rest.issues.create({
