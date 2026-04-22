@@ -1,6 +1,6 @@
 ## 🎮 Pick your challenge
 
-<img width="250px" alt="start-mol" src=".github/images/start-mol.png" align="right">
+<img width="250px" alt="start-mol" src="https://raw.githubusercontent.com/skills-dev/merge-of-legends/main/.github/images/start-mol.png" align="right">
 
 You’re the lead developer in a magical place called Codia, where everything normally runs smoothly on the main branch.
 

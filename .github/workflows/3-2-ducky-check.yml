@@ -116,15 +116,7 @@ jobs:
           issue-number: ${{ env.ISSUE_NUMBER }}
           file: ".github/steps/3-6-ducky-tip.md"
 
-      - name: Add comment - share links
-        uses: GrantBirki/comment@v2.1.1
-        with:
-          issue-number: ${{ env.ISSUE_NUMBER }}
-          file: ".github/steps/x-share-links.md"
-          vars: |
-            socials_text: "I just earned the Bubbles of Insight from Ducky in the Merge of Legends GitHub Skills quest! 🧙"
 
-      - name: Build issue description
         id: build-next-issue-description
         uses: skills/action-text-variables@v4.0.0
         with:
