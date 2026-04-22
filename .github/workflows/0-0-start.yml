@@ -101,7 +101,7 @@ jobs:
 
             // Return the location
             core.setOutput('issue_url', issue.html_url);
-            core.setOutput('issue_number', issue.number);
+            core.setOutput('issue_number', issue.number.toString());
         env:
           ISSUE_REPOSITORY: ${{ env.ISSUE_REPOSITORY || github.repository }}
           ISSUE_BODY: ${{ steps.build-issue-description.outputs.updated-text }}
