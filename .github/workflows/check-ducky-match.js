@@ -4,9 +4,63 @@ const REQUIRED_IMAGES = [
   ".github/images/copilot-intro.png",
 ];
 
+function getRepositoryParts() {
+  const repository = process.env.GITHUB_REPOSITORY;
+  if (typeof repository !== "string") return null;
+
+  const parts = repository.split("/");
+  if (parts.length !== 2 || !parts[0] || !parts[1]) return null;
+
+  return { owner: parts[0], repo: parts[1] };
+}
+
+function getRequiredImageFromPathname(pathname, prefixLength) {
+  const imagePath = pathname.slice(prefixLength).replace(/^\/+/, "");
+  return REQUIRED_IMAGES.find((requiredPath) => imagePath === requiredPath) || null;
+}
+
+function matchRepositoryImageUrl(url) {
+  let parsedUrl;
+  try {
+    parsedUrl = new URL(url);
+  } catch {
+    return null;
+  }
+
+  if (parsedUrl.protocol !== "https:") return null;
+
+  const repository = getRepositoryParts();
+  if (!repository) return null;
+
+  const pathname = parsedUrl.pathname;
+  const rawPrefix = `/${repository.owner}/${repository.repo}/`;
+  if (parsedUrl.hostname === "raw.githubusercontent.com" && pathname.startsWith(rawPrefix)) {
+    const refSeparator = pathname.indexOf("/", rawPrefix.length);
+    if (refSeparator === -1) return null;
+    return getRequiredImageFromPathname(pathname, refSeparator + 1);
+  }
+
+  const githubPrefix = `/${repository.owner}/${repository.repo}/`;
+  if (parsedUrl.hostname === "github.com" && pathname.startsWith(githubPrefix)) {
+    const rest = pathname.slice(githubPrefix.length);
+
+    if (rest.startsWith("raw/") || rest.startsWith("blob/")) {
+      const modeSeparator = rest.indexOf("/");
+      const refSeparator = rest.indexOf("/", modeSeparator + 1);
+      if (refSeparator === -1) return null;
+      return getRequiredImageFromPathname(rest, refSeparator + 1);
+    }
+  }
+
+  return null;
+}
+
 function matchRequiredImage(url) {
   if (typeof url !== "string") return null;
-  return REQUIRED_IMAGES.find((path) => url === path || url.endsWith(path)) || null;
+
+  if (REQUIRED_IMAGES.includes(url)) return url;
+
+  return matchRepositoryImageUrl(url);
 }
 
 /**
