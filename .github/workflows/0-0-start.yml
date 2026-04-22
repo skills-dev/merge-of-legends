@@ -1,206 +1,135 @@
 name: 0-0 Start
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
+  workflow_call:
   issues:
     types: [closed]
 
 permissions:
-  contents: write
+  contents: read
   actions: write
   issues: write
 
 env:
   EXERCISE_TITLE: "Merge of Legends"
   ISSUE_TITLE_PREFIX: "Quest: "
-  ISSUE_BODY: |-
-    Choose your path with Ducky, Mona, or Copilot to begin the Merge of Legends quest below
-    > [!WARNING]
-    > DO NOT CLICK **Create sub-issue**.
-    > Only check one challenge box below.
 
 jobs:
-  find_open_quest_issue:
-    name: Find open quest issue
+  start_exercise:
+    name: Start Exercise
     runs-on: ubuntu-latest
-    outputs:
-      issue-number: ${{ steps.find-open.outputs.issue-number }}
-      issue-url: ${{ steps.find-open.outputs.issue-url }}
-      should-create: ${{ steps.find-open.outputs.should-create }}
-      duplicate-issue-numbers: ${{ steps.find-open.outputs.duplicate-issue-numbers }}
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v5
         with:
           ref: main
 
-      - name: Find existing open quest issue
-        id: find-open
+      - name: Check for existing open quest issue
+        id: existing-open-issue
         uses: actions/github-script@v7
         with:
           script: |
-            const { planQuestIssueReset } = require(
-              `${process.env.GITHUB_WORKSPACE}/.github/workflows/quest-issue-utils`
-            );
-            const titlePrefix = "Quest: ";
-            const { owner, repo } = context.repo;
-
-            const { data: issues } = await github.rest.issues.listForRepo({
-              owner,
-              repo,
-              state: "open",
-              per_page: 100,
+            const expectedTitle = `${process.env.ISSUE_TITLE_PREFIX}${process.env.EXERCISE_TITLE}`;
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open'
             });
+            const matchingIssues = issues.filter(issue => !issue.pull_request && issue.title === expectedTitle);
+            const existingIssue = matchingIssues[0];
 
-            const plan = planQuestIssueReset(issues, titlePrefix);
-
-            core.setOutput("issue-number", plan.issueNumber);
-            core.setOutput("issue-url", plan.issueUrl);
-            core.setOutput("should-create", String(plan.shouldCreate));
-            core.setOutput("duplicate-issue-numbers", plan.duplicateIssueNumbers.join(","));
-
-            if (!plan.shouldCreate) {
-              core.info(`Reusing open quest issue #${plan.issueNumber}`);
-              if (plan.duplicateIssueNumbers.length > 0) {
-                core.info(`Closing duplicate open quest issues: ${plan.duplicateIssueNumbers.join(", ")}`);
-              }
-            } else {
-              core.info("No open quest issue found. A new one will be created.");
+            for (const duplicateIssue of matchingIssues.slice(1)) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: duplicateIssue.number,
+                state: 'closed'
+              });
+              core.info(`Closed duplicate open quest issue #${duplicateIssue.number}`);
             }
 
-  start_exercise:
-    name: Start Exercise
-    needs: [find_open_quest_issue]
-    if: needs.find_open_quest_issue.outputs.should-create == 'true'
-    runs-on: ubuntu-latest
-    outputs:
-      issue-number: ${{ steps.create-issue.outputs.issue-number }}
-      issue-url: ${{ steps.create-issue.outputs.issue-url }}
-    steps:
-      - name: Create quest issue
+            if (existingIssue) {
+              core.info(`Open quest issue already exists: #${existingIssue.number}`);
+              core.setOutput('has_open_issue', 'true');
+              core.setOutput('issue_url', existingIssue.html_url);
+              core.setOutput('issue_number', existingIssue.number.toString());
+            } else {
+              core.setOutput('has_open_issue', 'false');
+            }
+        env:
+          EXERCISE_TITLE: ${{ env.EXERCISE_TITLE }}
+          ISSUE_TITLE_PREFIX: ${{ env.ISSUE_TITLE_PREFIX }}
+
+      - name: Disable all exercise workflows
+        run: |
+          # Find all workflow files that start with a number (0-9)
+          workflows=$(git ls-files | grep -E '^\.github/workflows/[0-9].*\.(yml|yaml)$')
+          for workflow in $workflows; do
+            workflow_name="$(basename "$workflow")"
+            echo "Disabling workflow: $workflow_name"
+            gh workflow disable "$workflow_name" || true
+          done
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build issue description
+        id: build-issue-description
+        uses: skills/action-text-variables@v4.0.0
+        with:
+          template-file: .github/steps/0-0-start.md
+          template-vars: |
+            none: "none"
+
+      - name: Create issue
         id: create-issue
+        if: steps.existing-open-issue.outputs.has_open_issue != 'true'
         uses: actions/github-script@v7
         with:
           script: |
+            // Show repo where issue will be created
+            console.log(`Creating issue in repository:${ context.repo.owner }/${ context.repo.repo }`);
+
+            // Create the issue
             const { data: issue } = await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `${process.env.ISSUE_TITLE_PREFIX}${process.env.EXERCISE_TITLE}`,
-              body: process.env.ISSUE_BODY,
+              body: process.env.ISSUE_BODY
             });
 
-            core.setOutput("issue-number", String(issue.number));
-            core.setOutput("issue-url", issue.html_url);
+            // Return the location
+            core.setOutput('ISSUE_URL', issue.html_url);
+            core.setOutput('ISSUE_NUMBER', issue.number);
+        env:
+          ISSUE_REPOSITORY: ${{ env.ISSUE_REPOSITORY || github.repository }}
+          ISSUE_BODY: ${{ steps.build-issue-description.outputs.updated-text }}
+          EXERCISE_TITLE: ${{ env.EXERCISE_TITLE }}
+          ISSUE_TITLE_PREFIX: ${{ env.ISSUE_TITLE_PREFIX }}
 
-  cleanup_duplicate_quest_issues:
-    name: Close duplicate quest issues
-    runs-on: ubuntu-latest
-    needs: [find_open_quest_issue]
-    if: needs.find_open_quest_issue.outputs.duplicate-issue-numbers != ''
-    steps:
-      - name: Close duplicate open quest issues
+      - name: Set next issue URL
+        id: set-next-issue-url
         uses: actions/github-script@v7
         env:
-          DUPLICATE_ISSUE_NUMBERS: ${{ needs.find_open_quest_issue.outputs.duplicate-issue-numbers }}
+          EXISTING_ISSUE_URL: ${{ steps.existing-open-issue.outputs.issue_url }}
+          CREATED_ISSUE_URL: ${{ steps.create-issue.outputs.ISSUE_URL }}
         with:
           script: |
-            const duplicateIssueNumbers = (process.env.DUPLICATE_ISSUE_NUMBERS || "")
-              .split(",")
-              .map((value) => value.trim())
-              .filter(Boolean);
-
-            for (const issueNumber of duplicateIssueNumbers) {
-              core.info(`Closing duplicate quest issue #${issueNumber}`);
-              await github.rest.issues.update({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: Number(issueNumber),
-                state: "closed",
-              });
-            }
-
-  resolve_issue:
-    name: Resolve quest issue
-    runs-on: ubuntu-latest
-    needs: [find_open_quest_issue, start_exercise]
-    if: |
-      always() &&
-      needs.find_open_quest_issue.result == 'success' &&
-      (needs.start_exercise.result == 'success' || needs.start_exercise.result == 'skipped')
-    outputs:
-      issue-number: ${{ steps.resolve.outputs.issue-number }}
-      issue-url: ${{ steps.resolve.outputs.issue-url }}
-    steps:
-      - name: Resolve issue number and URL
-        id: resolve
-        uses: actions/github-script@v7
-        env:
-          EXISTING_ISSUE_NUMBER: ${{ needs.find_open_quest_issue.outputs.issue-number }}
-          EXISTING_ISSUE_URL: ${{ needs.find_open_quest_issue.outputs.issue-url }}
-          NEW_ISSUE_NUMBER: ${{ needs.start_exercise.outputs.issue-number }}
-          NEW_ISSUE_URL: ${{ needs.start_exercise.outputs.issue-url }}
-        with:
-          script: |
-            const existingIssueNumber = process.env.EXISTING_ISSUE_NUMBER || "";
-            const existingIssueUrl = process.env.EXISTING_ISSUE_URL || "";
-            const newIssueNumber = process.env.NEW_ISSUE_NUMBER || "";
-            const newIssueUrl = process.env.NEW_ISSUE_URL || "";
-
-            const issueNumber = existingIssueNumber || newIssueNumber;
-            const issueUrl = existingIssueUrl || newIssueUrl;
-
-            if (!issueNumber || !issueUrl) {
-              core.setFailed("Failed to resolve quest issue.");
-              return;
-            }
-
-            core.setOutput("issue-number", issueNumber);
-            core.setOutput("issue-url", issueUrl);
-
-  post_challenge_picker:
-    name: Post challenge picker
-    runs-on: ubuntu-latest
-    needs: [find_open_quest_issue, resolve_issue]
-    if: needs.find_open_quest_issue.outputs.should-create == 'true' && needs.resolve_issue.result == 'success'
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          ref: main
-
-      - name: Create comment - pick challenge
-        uses: GrantBirki/comment@v2.1.1
-        with:
-          issue-number: ${{ needs.resolve_issue.outputs.issue-number }}
-          file: ".github/steps/0-0-start.md"
-
-      - name: Reenable restart workflows and challenge picker
-        run: |
-          gh workflow enable "0-0 Start" || true
-          gh workflow enable "0-1 Pick" || true
-          gh workflow enable "1-1 Mona Start" || true
-          gh workflow enable "2-1 Copilot Start" || true
-          gh workflow enable "3-1 Ducky Start" || true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  comment_closed_issue_with_next_link:
-    name: Comment closed issue with next link
-    runs-on: ubuntu-latest
-    needs: [resolve_issue]
-    if: github.event_name == 'issues' && github.event.action == 'closed' && needs.resolve_issue.result == 'success'
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          ref: main
+            core.setOutput('issue_url', process.env.EXISTING_ISSUE_URL || process.env.CREATED_ISSUE_URL || '');
 
       - name: Add comment - close with next issue link
+        if: github.event_name == 'issues' && github.event.action == 'closed' && steps.set-next-issue-url.outputs.issue_url != ''
         uses: GrantBirki/comment@v2.1.1
         with:
           issue-number: ${{ github.event.issue.number }}
           file: ".github/steps/x-close-with-next-link.md"
           vars: |
-            next_issue_url: ${{ needs.resolve_issue.outputs.issue-url }}
+            next_issue_url: ${{ steps.set-next-issue-url.outputs.issue_url }}
+
+      - name: Reenable to allow restarting, and enable challenge picker workflow.
+        run: |
+          gh workflow enable "0-0 Start" || true
+          gh workflow enable "0-1 Pick" || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
