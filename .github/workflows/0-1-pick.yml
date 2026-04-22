@@ -71,6 +71,7 @@ jobs:
           script: |
             // Get the updated issue body from the event payload
             const issueBody = process.env.ISSUE_BODY || '';
+            const issueNumber = Number(process.env.ISSUE_NUMBER);
 
             // Disable all checkboxes in the issue body
             const updatedBody = issueBody.replace(/- \[([ xX])\] (.+)/g, (match, checked, label) => {
@@ -85,7 +86,7 @@ jobs:
                 await github.rest.issues.update({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  issue_number: Number(process.env.ISSUE_NUMBER),
+                  issue_number: issueNumber,
                   body: updatedBody
                 });
                 return;
