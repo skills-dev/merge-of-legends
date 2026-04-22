@@ -21,6 +21,10 @@ jobs:
         with:
           issue-number: ${{ inputs.issue-number }}
           file: ".github/steps/3-1-ducky-intro.md"
+          vars: |
+            ducky_intro_image_url: ${{ github.server_url }}/${{ github.repository }}/raw/${{ github.event.repository.default_branch }}/.github/images/ducky-intro.png
+            mona_intro_image_url: ${{ github.server_url }}/${{ github.repository }}/raw/${{ github.event.repository.default_branch }}/.github/images/mona-intro.png
+            copilot_intro_image_url: ${{ github.server_url }}/${{ github.repository }}/raw/${{ github.event.repository.default_branch }}/.github/images/copilot-intro.png
 
       - name: Add comment - show task
         uses: GrantBirki/comment@v2.1.1
