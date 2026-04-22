@@ -10,12 +10,12 @@
       </td>
       <td align="center">
         <img width="200px" alt="Mona" src="{{ mona_intro_image_url }}" /><br/>
-        <strong>:octocat: Mona</strong><br/>
+        <strong>🐱 Mona</strong><br/>
         Guardian of the Archives
       </td>
       <td align="center">
         <img width="200px" alt="Copilot" src="{{ copilot_intro_image_url }}" /><br/>
-        <strong>:copilot: Copilot</strong><br/>
+        <strong>🤖 Copilot</strong><br/>
         Practice the Flow of Prompting
       </td>
     </tr>
