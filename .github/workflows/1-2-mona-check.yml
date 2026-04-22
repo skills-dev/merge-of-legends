@@ -165,6 +165,7 @@ jobs:
             next_issue_url: ${{ steps.find-or-create-next-issue.outputs.issue_url }}
 
       - name: Pause before closing
+        # Give GitHub a moment to show the "next issue" comment before the issue is closed.
         run: sleep 5
 
       - name: Close the issue
@@ -174,7 +175,7 @@ jobs:
             await github.rest.issues.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: process.env.ISSUE_NUMBER,
+              issue_number: Number(process.env.ISSUE_NUMBER),
               state: 'closed'
             });
         env:

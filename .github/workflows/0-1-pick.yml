@@ -85,7 +85,7 @@ jobs:
                 await github.rest.issues.update({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  issue_number: process.env.ISSUE_NUMBER,
+                  issue_number: Number(process.env.ISSUE_NUMBER),
                   body: updatedBody
                 });
                 return;
