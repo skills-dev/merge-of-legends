@@ -4,6 +4,11 @@ const REQUIRED_IMAGES = [
   ".github/images/copilot-intro.png",
 ];
 
+function matchRequiredImage(url) {
+  if (typeof url !== "string") return null;
+  return REQUIRED_IMAGES.find((path) => url === path || url.endsWith(path)) || null;
+}
+
 /**
  * Parse card values from the "Uncovered Cards" section.
  *
@@ -50,8 +55,9 @@ function checkDuckyMatches(cards) {
   for (const card of cards) {
     const urls = extractImageUrls(card);
     if (urls.length !== 1) return false;
-    if (!REQUIRED_IMAGES.includes(urls[0])) return false;
-    counts[urls[0]] += 1;
+    const matchedImage = matchRequiredImage(urls[0]);
+    if (!matchedImage) return false;
+    counts[matchedImage] += 1;
   }
 
   return REQUIRED_IMAGES.every((url) => counts[url] === 2);

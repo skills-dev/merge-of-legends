@@ -1,6 +1,6 @@
 ## Ducky Match Game
 
-<img width="70%" alt="To reflect like me is to be like me. But you are you, not a reflection of yourself. To understand my essence, you must listen first and speak last. Your test has already begun." src=".github/images/ducky-reflect-quote.png" />
+<img width="70%" alt="To reflect like me is to be like me. But you are you, not a reflection of yourself. To understand my essence, you must listen first and speak last. Your test has already begun." src="{{ repo_image_base_url }}/ducky-reflect-quote.png" />
 
 Match the pairs by uncovering all 6 cards.
 
@@ -8,19 +8,19 @@ Match the pairs by uncovering all 6 cards.
 Use these three repository image paths, with **each image used exactly 2 times**.
 Preview images are shown below for reference:
 
-<img width="220" alt="Ducky intro" src=".github/images/ducky-intro.png" />
-<img width="220" alt="Mona intro" src=".github/images/mona-intro.png" />
-<img width="220" alt="Copilot intro" src=".github/images/copilot-intro.png" />
+<img width="220" alt="Ducky intro" src="{{ repo_image_base_url }}/ducky-intro.png" />
+<img width="220" alt="Mona intro" src="{{ repo_image_base_url }}/mona-intro.png" />
+<img width="220" alt="Copilot intro" src="{{ repo_image_base_url }}/copilot-intro.png" />
 
-`.github/images/ducky-intro.png`
-`.github/images/mona-intro.png`
-`.github/images/copilot-intro.png`
+`{{ repo_image_base_url }}/ducky-intro.png`
+`{{ repo_image_base_url }}/mona-intro.png`
+`{{ repo_image_base_url }}/copilot-intro.png`
 
 Example format:
 
-`![Ducky](.github/images/ducky-intro.png)`
-`![Mona](.github/images/mona-intro.png)`
-`![Copilot](.github/images/copilot-intro.png)`
+`![Ducky]({{ repo_image_base_url }}/ducky-intro.png)`
+`![Mona]({{ repo_image_base_url }}/mona-intro.png)`
+`![Copilot]({{ repo_image_base_url }}/copilot-intro.png)`
 
 ### Uncovered Cards
 
@@ -34,7 +34,7 @@ Example format:
 <details>
 <summary>Having trouble? 🤷</summary><br/>
 
-> - 💡 **Tip:** Replace each `HIDDEN` value with one markdown image like `![Ducky](.github/images/ducky-intro.png)`.
+> - 💡 **Tip:** Replace each `HIDDEN` value with one markdown image like `![Ducky]({{ repo_image_base_url }}/ducky-intro.png)`.
 > - 💡 **Tip:** The check passes only when all 6 cards are filled and each image appears exactly twice.
 
 </details>
