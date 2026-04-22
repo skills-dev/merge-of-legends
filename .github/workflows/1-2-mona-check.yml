@@ -115,7 +115,7 @@ jobs:
           issue-number: ${{ env.ISSUE_NUMBER }}
           file: ".github/steps/1-6-mona-tip.md"
 
-
+      - name: Build issue description
         id: build-next-issue-description
         uses: skills/action-text-variables@v4.0.0
         with:
