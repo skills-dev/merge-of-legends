@@ -21,14 +21,35 @@ jobs:
   start_exercise:
     name: Start Exercise
     runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'issues' || github.event.issue.title == format('{0}{1}', env.ISSUE_TITLE_PREFIX, env.EXERCISE_TITLE) }}
 
     steps:
+      - name: Decide whether to run quest flow
+        id: should-run
+        uses: actions/github-script@v7
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_PAYLOAD: ${{ toJson(github.event) }}
+          EXERCISE_TITLE: ${{ env.EXERCISE_TITLE }}
+          ISSUE_TITLE_PREFIX: ${{ env.ISSUE_TITLE_PREFIX }}
+        with:
+          script: |
+            const event = JSON.parse(process.env.EVENT_PAYLOAD);
+            const expectedTitle = `${process.env.ISSUE_TITLE_PREFIX}${process.env.EXERCISE_TITLE}`;
+            const issueTitle = event.issue?.title ?? '';
+            const shouldRun = process.env.EVENT_NAME !== 'issues' || issueTitle === expectedTitle;
+
+            core.info(`Event name: ${process.env.EVENT_NAME}`);
+            core.info(`Issue title: ${issueTitle || '(none)'}`);
+            core.info(`Expected title: ${expectedTitle}`);
+            core.setOutput('should_run', shouldRun.toString());
+
       - name: Checkout
+        if: steps.should-run.outputs.should_run == 'true'
         uses: actions/checkout@v5
 
       - name: Check for existing open quest issue
         id: existing-open-issue
+        if: steps.should-run.outputs.should_run == 'true'
         uses: actions/github-script@v7
         with:
           script: |
@@ -64,6 +85,7 @@ jobs:
           ISSUE_TITLE_PREFIX: ${{ env.ISSUE_TITLE_PREFIX }}
 
       - name: Disable all exercise workflows
+        if: steps.should-run.outputs.should_run == 'true'
         run: |
           # Find all workflow files that start with a number (0-9)
           workflows=$(git ls-files | grep -E '^\.github/workflows/[0-9].*\.(yml|yaml)$')
@@ -77,6 +99,7 @@ jobs:
 
       - name: Build issue description
         id: build-issue-description
+        if: steps.should-run.outputs.should_run == 'true'
         uses: skills/action-text-variables@v4.0.0
         with:
           template-file: .github/steps/0-0-start.md
@@ -85,7 +108,7 @@ jobs:
 
       - name: Create issue
         id: create-issue
-        if: steps.existing-open-issue.outputs.has_open_issue != 'true'
+        if: steps.should-run.outputs.should_run == 'true' && steps.existing-open-issue.outputs.has_open_issue != 'true'
         uses: actions/github-script@v7
         with:
           script: |
@@ -111,6 +134,7 @@ jobs:
 
       - name: Set next issue URL
         id: set-next-issue-url
+        if: steps.should-run.outputs.should_run == 'true'
         uses: actions/github-script@v7
         env:
           EXISTING_ISSUE_URL: ${{ steps.existing-open-issue.outputs.issue_url }}
@@ -120,7 +144,7 @@ jobs:
             core.setOutput('issue_url', process.env.EXISTING_ISSUE_URL || process.env.CREATED_ISSUE_URL || '');
 
       - name: Add comment - close with next issue link
-        if: github.event_name == 'issues' && github.event.action == 'closed' && steps.set-next-issue-url.outputs.issue_url != ''
+        if: steps.should-run.outputs.should_run == 'true' && github.event_name == 'issues' && github.event.action == 'closed' && steps.set-next-issue-url.outputs.issue_url != ''
         uses: GrantBirki/comment@v2.1.1
         with:
           issue-number: ${{ github.event.issue.number }}
@@ -129,6 +153,7 @@ jobs:
             next_issue_url: ${{ steps.set-next-issue-url.outputs.issue_url }}
 
       - name: Reenable to allow restarting, and enable challenge picker workflow.
+        if: steps.should-run.outputs.should_run == 'true'
         run: |
           gh workflow enable "0-0 Start" || true
           gh workflow enable "0-1 Pick" || true
