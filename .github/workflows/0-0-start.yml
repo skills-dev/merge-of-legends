@@ -155,10 +155,10 @@ jobs:
             core.setOutput('issue_url', process.env.EXISTING_ISSUE_URL || process.env.CREATED_ISSUE_URL || '');
 
       - name: Add comment - close with next issue link
-        if: ${{ steps.should-run.outputs.should_run == 'true' && steps.set-next-issue-url.outputs.issue_url != '' && (github.event_name == 'issues' || inputs.closed-issue-number != '') }}
+        if: ${{ steps.should-run.outputs.should_run == 'true' && steps.set-next-issue-url.outputs.issue_url != '' && (github.event_name == 'issues' || (github.event_name == 'workflow_call' && inputs.closed-issue-number != '')) }}
         uses: GrantBirki/comment@v2.1.1
         with:
-          issue-number: ${{ inputs.closed-issue-number || github.event.issue.number }}
+          issue-number: ${{ github.event_name == 'workflow_call' && inputs.closed-issue-number || github.event_name == 'issues' && github.event.issue.number || '' }}
           file: ".github/steps/x-close-with-next-link.md"
           vars: |
             next_issue_url: ${{ steps.set-next-issue-url.outputs.issue_url }}
