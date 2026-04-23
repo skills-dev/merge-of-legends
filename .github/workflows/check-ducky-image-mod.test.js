@@ -3,10 +3,10 @@ const {
   REQUIRED_IMAGES,
   parseUncoveredCards,
   checkDuckyMatches,
-} = require("./check-ducky-match");
+} = require("./check-ducky-image-mod");
 
 // Manually run these tests in the CLI:
-// node .github/workflows/check-ducky-match.test.js
+// node .github/workflows/check-ducky-image-mod.test.js
 
 const IMAGE_1 = REQUIRED_IMAGES.ducky;
 const IMAGE_2 = REQUIRED_IMAGES.mona;

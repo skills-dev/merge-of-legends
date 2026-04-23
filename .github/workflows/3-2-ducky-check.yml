@@ -24,27 +24,27 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Find match game comment
-        id: find-match-comment
+      - name: Find image-mod comment
+        id: find-image-mod-comment
         uses: peter-evans/find-comment@v3
         with:
           issue-number: ${{ env.ISSUE_NUMBER }}
           body-includes: "## Ducky Image Challenge"
           direction: last
 
-      - name: Check match game
-        id: check-match-game
+      - name: Check image-mod challenge
+        id: check-image-mod
         continue-on-error: true
         uses: actions/github-script@v7
         with:
           script: |
-            const { parseUncoveredCards, checkDuckyMatches } = require('./.github/workflows/check-ducky-match');
+            const { parseUncoveredCards, checkDuckyMatches } = require('./.github/workflows/check-ducky-image-mod');
             const { removeAlerts } = require('./.github/workflows/actions-utils');
 
             let commentBody = process.env.COMMENT_BODY;
 
             if (!commentBody) {
-              core.setFailed('No match game comment found.');
+              core.setFailed('No image-mod comment found.');
               return;
             }
 
@@ -68,8 +68,8 @@ jobs:
               body: commentBody
             });
         env:
-          COMMENT_BODY: ${{ steps.find-match-comment.outputs.comment-body }}
-          COMMENT_ID: ${{ steps.find-match-comment.outputs.comment-id }}
+          COMMENT_BODY: ${{ steps.find-image-mod-comment.outputs.comment-body }}
+          COMMENT_ID: ${{ steps.find-image-mod-comment.outputs.comment-id }}
 
       - name: Verify all checks passed
         id: verify-checks
