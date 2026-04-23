@@ -1,8 +1,8 @@
-const REQUIRED_IMAGES = [
-  ".github/images/ducky-intro.png",
-  ".github/images/mona-intro.png",
-  ".github/images/copilot-intro.png",
-];
+const REQUIRED_IMAGES = {
+  ducky: ".github/images/ducky-intro.png",
+  mona: ".github/images/mona-intro.png",
+  copilot: ".github/images/copilot-intro.png",
+};
 
 function getRepositoryParts() {
   const repository = process.env.GITHUB_REPOSITORY;
@@ -26,7 +26,7 @@ function getServerHostname() {
 }
 
 function getRequiredImageFromPathname(pathname, prefixLength) {
-  const requiredPath = REQUIRED_IMAGES.find((path) => pathname.endsWith(`/${path}`));
+  const requiredPath = Object.values(REQUIRED_IMAGES).find((path) => pathname.endsWith(`/${path}`));
   if (!requiredPath) return null;
 
   const refAndPath = pathname.slice(prefixLength);
@@ -79,13 +79,13 @@ function matchRepositoryImageUrl(url) {
 function matchRequiredImage(url) {
   if (typeof url !== "string") return null;
 
-  if (REQUIRED_IMAGES.includes(url)) return url;
+  if (Object.values(REQUIRED_IMAGES).includes(url)) return url;
 
   return matchRepositoryImageUrl(url);
 }
 
 /**
- * Parse card values from the "Uncovered Cards" section.
+ * Parse values from the challenge section.
  *
  * @param {string} text
  * @returns {string[]} array of card values in order
@@ -93,12 +93,12 @@ function matchRequiredImage(url) {
 function parseUncoveredCards(text) {
   if (typeof text !== "string" || text.length === 0) return [];
 
-  const sectionMatch = text.match(/###\s*Uncovered Cards([\s\S]*)/i);
+  const sectionMatch = text.match(/###\s*Character Slots([\s\S]*)/i);
   if (!sectionMatch) return [];
 
   const section = sectionMatch[1];
   const cards = [];
-  const cardLineRe = /^\s*-\s*Card\s*\d+\s*:\s*(.+)$/gim;
+  const cardLineRe = /^\s*-\s*Character\s*\d+\s*:\s*(.+)$/gim;
 
   let match;
   while ((match = cardLineRe.exec(section)) !== null) {
@@ -108,34 +108,50 @@ function parseUncoveredCards(text) {
   return cards;
 }
 
-function extractImageUrls(cardValue) {
-  if (typeof cardValue !== "string") return [];
+function extractImageAttributes(cardValue) {
+  if (typeof cardValue !== "string") return null;
+
   const value = cardValue.trim();
-  const markdownImageMatch = value.match(/^!\[[^\]]*]\(([^)\s]+)(?:\s+"[^"]*")?\)$/);
-  if (markdownImageMatch) return [markdownImageMatch[1]];
-  return [];
+  const imgTagMatch = value.match(/^<img\b([^>]*)\/?>$/i);
+  if (!imgTagMatch) return null;
+
+  const attributes = {};
+  const attrRe = /\b([a-zA-Z:-]+)\s*=\s*"([^"]*)"/g;
+  let match;
+  while ((match = attrRe.exec(imgTagMatch[1])) !== null) {
+    attributes[match[1].toLowerCase()] = match[2];
+  }
+
+  if (!attributes.src || !attributes.alt || !attributes.width) return null;
+  return attributes;
 }
 
 /**
- * Check if all 6 cards are uncovered and form three matched pairs.
+ * Check if all 3 character images are added with the required alt text and width.
  *
  * @param {string[]} cards
  * @returns {boolean}
  */
 function checkDuckyMatches(cards) {
-  if (!Array.isArray(cards) || cards.length !== 6) return false;
+  if (!Array.isArray(cards) || cards.length !== 3) return false;
 
-  const counts = Object.fromEntries(REQUIRED_IMAGES.map((url) => [url, 0]));
+  const remaining = new Set(Object.keys(REQUIRED_IMAGES));
 
   for (const card of cards) {
-    const urls = extractImageUrls(card);
-    if (urls.length !== 1) return false;
-    const matchedImage = matchRequiredImage(urls[0]);
-    if (!matchedImage) return false;
-    counts[matchedImage] += 1;
+    const attributes = extractImageAttributes(card);
+    if (!attributes) return false;
+    if (attributes.width !== "20%") return false;
+
+    const alt = attributes.alt.trim().toLowerCase();
+    if (!remaining.has(alt)) return false;
+
+    const matchedImage = matchRequiredImage(attributes.src);
+    if (!matchedImage || matchedImage !== REQUIRED_IMAGES[alt]) return false;
+
+    remaining.delete(alt);
   }
 
-  return REQUIRED_IMAGES.every((url) => counts[url] === 2);
+  return remaining.size === 0;
 }
 
 module.exports = { REQUIRED_IMAGES, parseUncoveredCards, checkDuckyMatches };
