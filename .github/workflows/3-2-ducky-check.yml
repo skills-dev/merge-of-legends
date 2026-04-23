@@ -29,7 +29,7 @@ jobs:
         uses: peter-evans/find-comment@v3
         with:
           issue-number: ${{ env.ISSUE_NUMBER }}
-          body-includes: "## Ducky Match Game"
+          body-includes: "## Ducky Image Challenge"
           direction: last
 
       - name: Check match game
@@ -55,10 +55,10 @@ jobs:
             commentBody = removeAlerts(commentBody);
 
             if (isCorrect) {
-              commentBody += `\n\n> [!TIP]\n> ✅ Perfect! You uncovered all 6 cards and matched all 3 pairs! 🐤\n`;
+              commentBody += `\n\n> [!TIP]\n> ✅ Perfect! You placed the three guide images with the correct width and alt text. 🐤\n`;
             } else {
-              commentBody += `\n\n> [!Caution]\n> ❌ Not quite. Fill all 6 cards and use each image exactly twice.\n`;
-              core.setFailed('Match game is incorrect.');
+              commentBody += `\n\n> [!Caution]\n> ❌ Not quite. Check the image tags, width, alt text, and repository image choices.\n`;
+              core.setFailed('Image challenge is incorrect.');
             }
 
             await github.rest.issues.updateComment({

@@ -8,7 +8,9 @@ const {
 // Manually run these tests in the CLI:
 // node .github/workflows/check-ducky-match.test.js
 
-const [IMAGE_1, IMAGE_2, IMAGE_3] = REQUIRED_IMAGES;
+const IMAGE_1 = REQUIRED_IMAGES.ducky;
+const IMAGE_2 = REQUIRED_IMAGES.mona;
+const IMAGE_3 = REQUIRED_IMAGES.copilot;
 const ORIGINAL_GITHUB_REPOSITORY = process.env.GITHUB_REPOSITORY;
 const ORIGINAL_GITHUB_SERVER_URL = process.env.GITHUB_SERVER_URL;
 
@@ -37,17 +39,14 @@ function withGitHubContext({ repository, serverUrl }, callback) {
 // parseUncoveredCards: extracts six cards in order
 (() => {
   const text = `
-### Uncovered Cards
+### Character Slots
 
-- Card 1: ${IMAGE_1}
-- Card 2: ${IMAGE_2}
-- Card 3: ${IMAGE_3}
-- Card 4: ${IMAGE_1}
-- Card 5: ${IMAGE_2}
-- Card 6: ${IMAGE_3}
+- Character 1: ${IMAGE_1}
+- Character 2: ${IMAGE_2}
+- Character 3: ${IMAGE_3}
 `;
   const cards = parseUncoveredCards(text);
-  assert.deepStrictEqual(cards, [IMAGE_1, IMAGE_2, IMAGE_3, IMAGE_1, IMAGE_2, IMAGE_3]);
+  assert.deepStrictEqual(cards, [IMAGE_1, IMAGE_2, IMAGE_3]);
 })();
 
 // parseUncoveredCards: non-string input returns empty array
@@ -56,31 +55,25 @@ function withGitHubContext({ repository, serverUrl }, callback) {
   assert.deepStrictEqual(parseUncoveredCards(undefined), []);
 })();
 
-// checkDuckyMatches: required markdown image entries with pairs returns true
+// checkDuckyMatches: exact HTML image tags with required width and alt text return true
 (() => {
   assert.strictEqual(
     checkDuckyMatches([
-      `![Ducky](${IMAGE_1})`,
-      `![Mona](${IMAGE_2})`,
-      `![Copilot](${IMAGE_3})`,
-      `![Ducky](${IMAGE_1})`,
-      `![Mona](${IMAGE_2})`,
-      `![Copilot](${IMAGE_3})`,
+      `<img width="20%" alt="ducky" src="${IMAGE_1}" />`,
+      `<img width="20%" alt="mona" src="${IMAGE_2}" />`,
+      `<img width="20%" alt="copilot" src="${IMAGE_3}" />`,
     ]),
     true
   );
 })();
 
-// checkDuckyMatches: supports markdown image syntax
+// checkDuckyMatches: accepts the three valid tags in any order
 (() => {
   assert.strictEqual(
     checkDuckyMatches([
-      `![one](${IMAGE_1})`,
-      `![two](${IMAGE_2})`,
-      `![three](${IMAGE_3})`,
-      `![one again](${IMAGE_1})`,
-      `![two again](${IMAGE_2})`,
-      `![three again](${IMAGE_3})`,
+      `<img width="20%" alt="copilot" src="${IMAGE_3}" />`,
+      `<img width="20%" alt="ducky" src="${IMAGE_1}" />`,
+      `<img width="20%" alt="mona" src="${IMAGE_2}" />`,
     ]),
     true
   );
@@ -96,12 +89,9 @@ function withGitHubContext({ repository, serverUrl }, callback) {
     () => {
       assert.strictEqual(
         checkDuckyMatches([
-          "![Ducky](https://raw.githubusercontent.com/octo-org/quest-repo/main/.github/images/ducky-intro.png)",
-          "![Mona](https://raw.githubusercontent.com/octo-org/quest-repo/main/.github/images/mona-intro.png)",
-          "![Copilot](https://raw.githubusercontent.com/octo-org/quest-repo/main/.github/images/copilot-intro.png)",
-          "![Ducky](https://raw.githubusercontent.com/octo-org/quest-repo/main/.github/images/ducky-intro.png)",
-          "![Mona](https://raw.githubusercontent.com/octo-org/quest-repo/main/.github/images/mona-intro.png)",
-          "![Copilot](https://raw.githubusercontent.com/octo-org/quest-repo/main/.github/images/copilot-intro.png)",
+          '<img width="20%" alt="ducky" src="https://raw.githubusercontent.com/octo-org/quest-repo/main/.github/images/ducky-intro.png" />',
+          '<img width="20%" alt="mona" src="https://raw.githubusercontent.com/octo-org/quest-repo/main/.github/images/mona-intro.png" />',
+          '<img width="20%" alt="copilot" src="https://raw.githubusercontent.com/octo-org/quest-repo/main/.github/images/copilot-intro.png" />',
         ]),
         true
       );
@@ -119,12 +109,9 @@ function withGitHubContext({ repository, serverUrl }, callback) {
     () => {
       assert.strictEqual(
         checkDuckyMatches([
-          "![Ducky](https://github.com/octo-org/quest-repo/raw/release/v1/.github/images/ducky-intro.png)",
-          "![Mona](https://github.com/octo-org/quest-repo/blob/release/v1/.github/images/mona-intro.png)",
-          "![Copilot](https://github.com/octo-org/quest-repo/raw/release/v1/.github/images/copilot-intro.png)",
-          "![Ducky](https://github.com/octo-org/quest-repo/blob/release/v1/.github/images/ducky-intro.png)",
-          "![Mona](https://github.com/octo-org/quest-repo/raw/release/v1/.github/images/mona-intro.png)",
-          "![Copilot](https://github.com/octo-org/quest-repo/blob/release/v1/.github/images/copilot-intro.png)",
+          '<img width="20%" alt="ducky" src="https://github.com/octo-org/quest-repo/raw/release/v1/.github/images/ducky-intro.png" />',
+          '<img width="20%" alt="mona" src="https://github.com/octo-org/quest-repo/blob/release/v1/.github/images/mona-intro.png" />',
+          '<img width="20%" alt="copilot" src="https://github.com/octo-org/quest-repo/raw/release/v1/.github/images/copilot-intro.png" />',
         ]),
         true
       );
@@ -142,12 +129,9 @@ function withGitHubContext({ repository, serverUrl }, callback) {
     () => {
       assert.strictEqual(
         checkDuckyMatches([
-          "![Ducky](https://git.example.com/octo-org/quest-repo/raw/trunk/.github/images/ducky-intro.png)",
-          "![Mona](https://git.example.com/octo-org/quest-repo/raw/trunk/.github/images/mona-intro.png)",
-          "![Copilot](https://git.example.com/octo-org/quest-repo/raw/trunk/.github/images/copilot-intro.png)",
-          "![Ducky](https://git.example.com/octo-org/quest-repo/raw/trunk/.github/images/ducky-intro.png)",
-          "![Mona](https://git.example.com/octo-org/quest-repo/raw/trunk/.github/images/mona-intro.png)",
-          "![Copilot](https://git.example.com/octo-org/quest-repo/raw/trunk/.github/images/copilot-intro.png)",
+          '<img width="20%" alt="ducky" src="https://git.example.com/octo-org/quest-repo/raw/trunk/.github/images/ducky-intro.png" />',
+          '<img width="20%" alt="mona" src="https://git.example.com/octo-org/quest-repo/raw/trunk/.github/images/mona-intro.png" />',
+          '<img width="20%" alt="copilot" src="https://git.example.com/octo-org/quest-repo/raw/trunk/.github/images/copilot-intro.png" />',
         ]),
         true
       );
@@ -165,12 +149,9 @@ function withGitHubContext({ repository, serverUrl }, callback) {
     () => {
       assert.strictEqual(
         checkDuckyMatches([
-          "![Ducky](https://example.com/octo-org/quest-repo/raw/main/.github/images/ducky-intro.png)",
-          "![Mona](https://example.com/octo-org/quest-repo/raw/main/.github/images/mona-intro.png)",
-          "![Copilot](https://example.com/octo-org/quest-repo/raw/main/.github/images/copilot-intro.png)",
-          "![Ducky](https://example.com/octo-org/quest-repo/raw/main/.github/images/ducky-intro.png)",
-          "![Mona](https://example.com/octo-org/quest-repo/raw/main/.github/images/mona-intro.png)",
-          "![Copilot](https://example.com/octo-org/quest-repo/raw/main/.github/images/copilot-intro.png)",
+          '<img width="20%" alt="ducky" src="https://example.com/octo-org/quest-repo/raw/main/.github/images/ducky-intro.png" />',
+          '<img width="20%" alt="mona" src="https://example.com/octo-org/quest-repo/raw/main/.github/images/mona-intro.png" />',
+          '<img width="20%" alt="copilot" src="https://example.com/octo-org/quest-repo/raw/main/.github/images/copilot-intro.png" />',
         ]),
         false
       );
@@ -178,67 +159,84 @@ function withGitHubContext({ repository, serverUrl }, callback) {
   );
 })();
 
-// checkDuckyMatches: wrong number of cards returns false
-(() => {
-  assert.strictEqual(checkDuckyMatches([IMAGE_1, IMAGE_2, IMAGE_3]), false);
-})();
-
-// checkDuckyMatches: wrong distribution returns false
-(() => {
-  assert.strictEqual(
-    checkDuckyMatches([IMAGE_1, IMAGE_1, IMAGE_1, IMAGE_2, IMAGE_2, IMAGE_3]),
-    false
-  );
-})();
-
-// checkDuckyMatches: unknown image returns false
-(() => {
-  assert.strictEqual(
-    checkDuckyMatches([IMAGE_1, IMAGE_2, IMAGE_3, IMAGE_1, IMAGE_2, "../images/not-real.png"]),
-    false
-  );
-})();
-
-// checkDuckyMatches: card containing a required image URL plus an extra URL returns false
+// checkDuckyMatches: wrong number of entries returns false
 (() => {
   assert.strictEqual(
     checkDuckyMatches([
-      IMAGE_1,
-      IMAGE_2,
-      IMAGE_3,
-      IMAGE_1,
-      IMAGE_2,
-      `${IMAGE_3} https://example.com/x.png`,
+      `<img width="20%" alt="ducky" src="${IMAGE_1}" />`,
+      `<img width="20%" alt="mona" src="${IMAGE_2}" />`,
     ]),
     false
   );
 })();
 
-// checkDuckyMatches: bare local image path (no markdown image syntax) returns false
+// checkDuckyMatches: duplicate alt text returns false
 (() => {
   assert.strictEqual(
-    checkDuckyMatches([IMAGE_1, IMAGE_2, IMAGE_3, IMAGE_1, IMAGE_2, IMAGE_3]),
-    false
-  );
-})();
-// checkDuckyMatches: hidden card value returns false
-(() => {
-  assert.strictEqual(
-    checkDuckyMatches([IMAGE_1, IMAGE_2, IMAGE_3, IMAGE_1, IMAGE_2, "`HIDDEN`"]),
+    checkDuckyMatches([
+      `<img width="20%" alt="ducky" src="${IMAGE_1}" />`,
+      `<img width="20%" alt="ducky" src="${IMAGE_1}" />`,
+      `<img width="20%" alt="copilot" src="${IMAGE_3}" />`,
+    ]),
     false
   );
 })();
 
-// checkDuckyMatches: plain text containing a valid local image path returns false
+// checkDuckyMatches: mismatched alt and image returns false
+(() => {
+  assert.strictEqual(
+    checkDuckyMatches([
+      `<img width="20%" alt="ducky" src="${IMAGE_2}" />`,
+      `<img width="20%" alt="mona" src="${IMAGE_2}" />`,
+      `<img width="20%" alt="copilot" src="${IMAGE_3}" />`,
+    ]),
+    false
+  );
+})();
+
+// checkDuckyMatches: wrong width returns false
+(() => {
+  assert.strictEqual(
+    checkDuckyMatches([
+      `<img width="25%" alt="ducky" src="${IMAGE_1}" />`,
+      `<img width="20%" alt="mona" src="${IMAGE_2}" />`,
+      `<img width="20%" alt="copilot" src="${IMAGE_3}" />`,
+    ]),
+    false
+  );
+})();
+
+// checkDuckyMatches: markdown image syntax returns false
+(() => {
+  assert.strictEqual(
+    checkDuckyMatches([
+      `![ducky](${IMAGE_1})`,
+      `![mona](${IMAGE_2})`,
+      `![copilot](${IMAGE_3})`,
+    ]),
+    false
+  );
+})();
+
+// checkDuckyMatches: hidden placeholder returns false
+(() => {
+  assert.strictEqual(
+    checkDuckyMatches([
+      `<img width="20%" alt="ducky" src="${IMAGE_1}" />`,
+      `<img width="20%" alt="mona" src="${IMAGE_2}" />`,
+      "`HIDDEN`",
+    ]),
+    false
+  );
+})();
+
+// checkDuckyMatches: plain text returns false
 (() => {
   assert.strictEqual(
     checkDuckyMatches([
       `Use this ${IMAGE_1}`,
-      IMAGE_2,
-      IMAGE_3,
-      IMAGE_1,
-      IMAGE_2,
-      IMAGE_3,
+      `<img width="20%" alt="mona" src="${IMAGE_2}" />`,
+      `<img width="20%" alt="copilot" src="${IMAGE_3}" />`,
     ]),
     false
   );
