@@ -44,7 +44,7 @@ jobs:
             let commentBody = process.env.COMMENT_BODY;
 
             if (!commentBody) {
-              core.setFailed('No image-mod comment found.');
+              core.setFailed('No "Ducky Image Challenge" comment found.');
               return;
             }
 
