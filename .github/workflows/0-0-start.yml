@@ -17,7 +17,7 @@ env:
   ISSUE_BODY: |-
     ## 🎮 Pick your challenge
 
-    <img width="250px" alt="start-mol" src="${{ github.server_url }}/${{ github.repository }}/blob/main/.github/images/start-mol.png?raw=1" align="right">
+    <img width="250px" alt="start-mol" src="${{ github.server_url }}/${{ github.repository }}/raw/${{ github.event.repository.default_branch }}/.github/images/start-mol.png" align="right">
 
     You’re the lead developer in a magical place called Codia, where everything normally runs smoothly on the main branch.
 
@@ -54,8 +54,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
-        with:
-          ref: main
 
       - name: Check for existing open quest issue
         id: existing-open-issue

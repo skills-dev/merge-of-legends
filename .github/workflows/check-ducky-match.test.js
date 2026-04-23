@@ -9,6 +9,20 @@ const {
 // node .github/workflows/check-ducky-match.test.js
 
 const [IMAGE_1, IMAGE_2, IMAGE_3] = REQUIRED_IMAGES;
+const ORIGINAL_GITHUB_REPOSITORY = process.env.GITHUB_REPOSITORY;
+const ORIGINAL_GITHUB_SERVER_URL = process.env.GITHUB_SERVER_URL;
+
+function withGitHubContext({ repository, serverUrl }, callback) {
+  process.env.GITHUB_REPOSITORY = repository;
+  process.env.GITHUB_SERVER_URL = serverUrl;
+
+  try {
+    callback();
+  } finally {
+    process.env.GITHUB_REPOSITORY = ORIGINAL_GITHUB_REPOSITORY;
+    process.env.GITHUB_SERVER_URL = ORIGINAL_GITHUB_SERVER_URL;
+  }
+}
 
 // parseUncoveredCards: empty string returns empty array
 (() => {
@@ -69,6 +83,98 @@ const [IMAGE_1, IMAGE_2, IMAGE_3] = REQUIRED_IMAGES;
       `![three again](${IMAGE_3})`,
     ]),
     true
+  );
+})();
+
+// checkDuckyMatches: supports raw.githubusercontent.com URLs for the current repository
+(() => {
+  withGitHubContext(
+    {
+      repository: "octo-org/quest-repo",
+      serverUrl: "https://github.com",
+    },
+    () => {
+      assert.strictEqual(
+        checkDuckyMatches([
+          "![Ducky](https://raw.githubusercontent.com/octo-org/quest-repo/main/.github/images/ducky-intro.png)",
+          "![Mona](https://raw.githubusercontent.com/octo-org/quest-repo/main/.github/images/mona-intro.png)",
+          "![Copilot](https://raw.githubusercontent.com/octo-org/quest-repo/main/.github/images/copilot-intro.png)",
+          "![Ducky](https://raw.githubusercontent.com/octo-org/quest-repo/main/.github/images/ducky-intro.png)",
+          "![Mona](https://raw.githubusercontent.com/octo-org/quest-repo/main/.github/images/mona-intro.png)",
+          "![Copilot](https://raw.githubusercontent.com/octo-org/quest-repo/main/.github/images/copilot-intro.png)",
+        ]),
+        true
+      );
+    }
+  );
+})();
+
+// checkDuckyMatches: supports github.com raw/blob URLs with refs containing slashes
+(() => {
+  withGitHubContext(
+    {
+      repository: "octo-org/quest-repo",
+      serverUrl: "https://github.com",
+    },
+    () => {
+      assert.strictEqual(
+        checkDuckyMatches([
+          "![Ducky](https://github.com/octo-org/quest-repo/raw/release/v1/.github/images/ducky-intro.png)",
+          "![Mona](https://github.com/octo-org/quest-repo/blob/release/v1/.github/images/mona-intro.png)",
+          "![Copilot](https://github.com/octo-org/quest-repo/raw/release/v1/.github/images/copilot-intro.png)",
+          "![Ducky](https://github.com/octo-org/quest-repo/blob/release/v1/.github/images/ducky-intro.png)",
+          "![Mona](https://github.com/octo-org/quest-repo/raw/release/v1/.github/images/mona-intro.png)",
+          "![Copilot](https://github.com/octo-org/quest-repo/blob/release/v1/.github/images/copilot-intro.png)",
+        ]),
+        true
+      );
+    }
+  );
+})();
+
+// checkDuckyMatches: supports GHES raw URLs for the current repository
+(() => {
+  withGitHubContext(
+    {
+      repository: "octo-org/quest-repo",
+      serverUrl: "https://git.example.com",
+    },
+    () => {
+      assert.strictEqual(
+        checkDuckyMatches([
+          "![Ducky](https://git.example.com/octo-org/quest-repo/raw/trunk/.github/images/ducky-intro.png)",
+          "![Mona](https://git.example.com/octo-org/quest-repo/raw/trunk/.github/images/mona-intro.png)",
+          "![Copilot](https://git.example.com/octo-org/quest-repo/raw/trunk/.github/images/copilot-intro.png)",
+          "![Ducky](https://git.example.com/octo-org/quest-repo/raw/trunk/.github/images/ducky-intro.png)",
+          "![Mona](https://git.example.com/octo-org/quest-repo/raw/trunk/.github/images/mona-intro.png)",
+          "![Copilot](https://git.example.com/octo-org/quest-repo/raw/trunk/.github/images/copilot-intro.png)",
+        ]),
+        true
+      );
+    }
+  );
+})();
+
+// checkDuckyMatches: rejects absolute URLs from a different host
+(() => {
+  withGitHubContext(
+    {
+      repository: "octo-org/quest-repo",
+      serverUrl: "https://github.com",
+    },
+    () => {
+      assert.strictEqual(
+        checkDuckyMatches([
+          "![Ducky](https://example.com/octo-org/quest-repo/raw/main/.github/images/ducky-intro.png)",
+          "![Mona](https://example.com/octo-org/quest-repo/raw/main/.github/images/mona-intro.png)",
+          "![Copilot](https://example.com/octo-org/quest-repo/raw/main/.github/images/copilot-intro.png)",
+          "![Ducky](https://example.com/octo-org/quest-repo/raw/main/.github/images/ducky-intro.png)",
+          "![Mona](https://example.com/octo-org/quest-repo/raw/main/.github/images/mona-intro.png)",
+          "![Copilot](https://example.com/octo-org/quest-repo/raw/main/.github/images/copilot-intro.png)",
+        ]),
+        false
+      );
+    }
   );
 })();
 

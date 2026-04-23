@@ -12,6 +12,8 @@ jobs:
   show_challenge:
     name: Show Challenge
     runs-on: ubuntu-latest
+    env:
+      REPO_IMAGE_BASE_URL: ${{ github.server_url }}/${{ github.repository }}/raw/${{ github.event.repository.default_branch }}/.github/images
     steps:
       - uses: actions/checkout@v5
 
@@ -20,12 +22,16 @@ jobs:
         with:
           issue-number: ${{ inputs.issue-number }}
           file: ".github/steps/2-1-copilot-intro.md"
+          vars: |
+            repo_image_base_url: ${{ env.REPO_IMAGE_BASE_URL }}
 
       - name: Add comment - show task
         uses: GrantBirki/comment@v2.1.1
         with:
           issue-number: ${{ inputs.issue-number }}
           file: ".github/steps/2-2-copilot-talk.md"
+          vars: |
+            repo_image_base_url: ${{ env.REPO_IMAGE_BASE_URL }}
 
       - name: Add comment - show question 1
         uses: GrantBirki/comment@v2.1.1

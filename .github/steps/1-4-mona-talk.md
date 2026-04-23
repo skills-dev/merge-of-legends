@@ -1,8 +1,8 @@
 {%- if not_asc_count == 0 %}
-<img alt="Hmm... My staff does not sense any more corruption. Well done, adventurer!" src=".github/images/mona-staff-no-corruption.png"/>
+<img alt="Hmm... My staff does not sense any more corruption. Well done, adventurer!" src="{{ repo_image_base_url }}/mona-staff-no-corruption.png"/>
 
 {%- else %}
-<img width="250px" align="left" alt="Mona" src=".github/images/mona-character.png"/>
+<img width="250px" align="left" alt="Mona" src="{{ repo_image_base_url }}/mona-character.png"/>
 
 Hmm... Upon inspection with my staff, it confirms the mainline is still corrupt.
 
