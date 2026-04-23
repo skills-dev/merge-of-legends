@@ -8,7 +8,7 @@ Shape the three guides into view.
 
 - `width="20%"`
 - `alt="ducky"`, `alt="mona"`, and `alt="copilot"`
-- the matching intro image from this repository
+- the corresponding intro image from this repository
 
 Preview images are shown below for reference:
 
