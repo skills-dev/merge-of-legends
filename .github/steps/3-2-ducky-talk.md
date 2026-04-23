@@ -10,11 +10,11 @@ Shape the three guides into view.
 - `alt="ducky"`, `alt="mona"`, and `alt="copilot"`
 - the matching intro image from this repository as the `src`
 
-Preview images are shown below for reference:
+ Images references to use are shown below:
 
-<img width="20%" alt="ducky" src="{{ repo_image_base_url }}/ducky-intro.png" />
-<img width="20%" alt="mona" src="{{ repo_image_base_url }}/mona-intro.png" />
-<img width="20%" alt="copilot" src="{{ repo_image_base_url }}/copilot-intro.png" />
+`{{ repo_image_base_url }}/ducky-intro.png`
+`{{ repo_image_base_url }}/mona-intro.png`
+`{{ repo_image_base_url }}/copilot-intro.png`
 
 Example format for one image:
 
@@ -22,9 +22,9 @@ Example format for one image:
 
 ### Character Slots
 
-- Character 1: `HIDDEN`
-- Character 2: `HIDDEN`
-- Character 3: `HIDDEN`
+- Character 1: PLACE-IMAGE-HERE
+- Character 2: PLACE-IMAGE-HERE
+- Character 3: PLACE-IMAGE-HERE
 
 <details>
 <summary>Having trouble? 🤷</summary><br/>
