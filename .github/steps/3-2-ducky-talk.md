@@ -4,11 +4,11 @@
 
 Shape the three guides into view.
 
-**Edit this comment** so each line below contains one HTML image tag using:
+**Edit this comment** by replacing each `HIDDEN` value in the **Character Slots** list below with a single HTML image tag using:
 
 - `width="20%"`
 - `alt="ducky"`, `alt="mona"`, and `alt="copilot"`
-- the corresponding intro image from this repository
+- the matching intro image from this repository as the `src`
 
 Preview images are shown below for reference:
 
