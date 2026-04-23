@@ -18,6 +18,7 @@ env:
 jobs:
   start_exercise:
     name: Start Exercise
+    if: ${{ github.event_name != 'issues' || github.event.issue.title == 'Quest: Merge of Legends' }}
     runs-on: ubuntu-latest
 
     steps:
