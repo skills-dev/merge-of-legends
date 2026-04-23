@@ -13,7 +13,7 @@ jobs:
   check_step_work:
     name: Check step work
     runs-on: ubuntu-latest
-    if: ${{ !endsWith(github.actor, '[bot]') }}
+    if: ${{ github.event.issue.state == 'open' && !endsWith(github.actor, '[bot]') }}
     env:
       ISSUE_NUMBER: ${{ github.event.issue.number }}
       REPO_IMAGE_BASE_URL: ${{ github.server_url }}/${{ github.repository }}/raw/${{ github.event.repository.default_branch }}/.github/images
@@ -91,7 +91,7 @@ jobs:
     name: Finish challenge
     needs: check_step_work
     runs-on: ubuntu-latest
-    if: needs.check_step_work.outputs.all_passed == 'true'
+    if: ${{ github.event.issue.state == 'open' && needs.check_step_work.outputs.all_passed == 'true' }}
     env:
       ISSUE_NUMBER: ${{ github.event.issue.number }}
       REPO_IMAGE_BASE_URL: ${{ github.server_url }}/${{ github.repository }}/raw/${{ github.event.repository.default_branch }}/.github/images
