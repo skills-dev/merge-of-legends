@@ -1,5 +1,9 @@
 name: 0-1 Pick
 
+concurrency:
+  group: 0-1-pick-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
 on:
   issues:
     types: [edited]

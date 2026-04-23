@@ -5,6 +5,15 @@ on:
     branches: [main]
   workflow_dispatch:
   workflow_call:
+    inputs:
+      closed-issue-number:
+        description: "Closed quest issue number to comment on with the next issue link"
+        required: false
+        type: string
+    outputs:
+      issue-url:
+        description: "URL of the created or existing open quest issue"
+        value: ${{ jobs.start_exercise.outputs.issue_url }}
   issues:
     types: [closed]
 
@@ -21,6 +30,8 @@ jobs:
   start_exercise:
     name: Start Exercise
     runs-on: ubuntu-latest
+    outputs:
+      issue_url: ${{ steps.set-next-issue-url.outputs.issue_url }}
 
     steps:
       - name: Decide whether to run quest flow
@@ -144,10 +155,10 @@ jobs:
             core.setOutput('issue_url', process.env.EXISTING_ISSUE_URL || process.env.CREATED_ISSUE_URL || '');
 
       - name: Add comment - close with next issue link
-        if: steps.should-run.outputs.should_run == 'true' && github.event_name == 'issues' && github.event.action == 'closed' && steps.set-next-issue-url.outputs.issue_url != ''
+        if: ${{ steps.should-run.outputs.should_run == 'true' && steps.set-next-issue-url.outputs.issue_url != '' && (github.event_name == 'issues' || inputs.closed-issue-number != '') }}
         uses: GrantBirki/comment@v2.1.1
         with:
-          issue-number: ${{ github.event.issue.number }}
+          issue-number: ${{ inputs.closed-issue-number || github.event.issue.number }}
           file: ".github/steps/x-close-with-next-link.md"
           vars: |
             next_issue_url: ${{ steps.set-next-issue-url.outputs.issue_url }}
