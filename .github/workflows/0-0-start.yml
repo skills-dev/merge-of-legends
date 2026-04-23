@@ -78,7 +78,7 @@ jobs:
         with:
           template-file: .github/steps/0-0-start.md
           template-vars: |
-            repo_image_base_url: ${{ github.server_url }}/${{ github.repository }}/raw/main/.github/images
+            repo_image_base_url: ${{ github.server_url }}/${{ github.repository }}/raw/${{ github.event.repository.default_branch }}/.github/images
 
       - name: Create issue
         id: create-issue
