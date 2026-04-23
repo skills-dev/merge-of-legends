@@ -36,7 +36,7 @@ function withGitHubContext({ repository, serverUrl }, callback) {
   assert.deepStrictEqual(parseUncoveredCards("some text without cards"), []);
 })();
 
-// parseUncoveredCards: extracts six cards in order
+// parseUncoveredCards: extracts three character slots in order
 (() => {
   const text = `
 ### Character Slots
