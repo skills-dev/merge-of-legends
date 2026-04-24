@@ -154,14 +154,50 @@ jobs:
           script: |
             core.setOutput('issue_url', process.env.EXISTING_ISSUE_URL || process.env.CREATED_ISSUE_URL || '');
 
-      - name: Add comment - close with next issue link
-        if: ${{ steps.should-run.outputs.should_run == 'true' && steps.set-next-issue-url.outputs.issue_url != '' && (github.event_name == 'issues' || (github.event_name == 'workflow_call' && inputs.closed-issue-number != '')) }}
-        uses: GrantBirki/comment@v2.1.1
+      - name: Set closed issue number
+        id: set-closed-issue-number
+        if: steps.should-run.outputs.should_run == 'true'
+        uses: actions/github-script@v7
+        env:
+          CLOSED_ISSUE_NUMBER_FROM_INPUT: ${{ github.event_name == 'workflow_call' && inputs.closed-issue-number || '' }}
+          CLOSED_ISSUE_NUMBER_FROM_EVENT: ${{ github.event_name == 'issues' && github.event.issue.number || '' }}
         with:
-          issue-number: ${{ github.event_name == 'workflow_call' && inputs.closed-issue-number || github.event_name == 'issues' && github.event.issue.number || '' }}
-          file: ".github/steps/x-close-with-next-link.md"
-          vars: |
+          script: |
+            const issueNumber =
+              process.env.CLOSED_ISSUE_NUMBER_FROM_INPUT ||
+              process.env.CLOSED_ISSUE_NUMBER_FROM_EVENT ||
+              '';
+
+            if (issueNumber && !/^\d+$/.test(issueNumber)) {
+              core.setFailed(`Closed issue number must be numeric. Received: ${issueNumber}`);
+              return;
+            }
+
+            core.setOutput('issue_number', issueNumber);
+
+      - name: Build close comment
+        id: build-close-comment
+        if: ${{ steps.should-run.outputs.should_run == 'true' && steps.set-next-issue-url.outputs.issue_url != '' && steps.set-closed-issue-number.outputs.issue_number != '' }}
+        uses: skills/action-text-variables@v4.0.0
+        with:
+          template-file: .github/steps/x-close-with-next-link.md
+          template-vars: |
             next_issue_url: ${{ steps.set-next-issue-url.outputs.issue_url }}
+
+      - name: Add comment - close with next issue link
+        if: ${{ steps.should-run.outputs.should_run == 'true' && steps.set-next-issue-url.outputs.issue_url != '' && steps.set-closed-issue-number.outputs.issue_number != '' }}
+        uses: actions/github-script@v7
+        env:
+          CLOSED_ISSUE_NUMBER: ${{ steps.set-closed-issue-number.outputs.issue_number }}
+          COMMENT_BODY: ${{ steps.build-close-comment.outputs.updated-text }}
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: Number(process.env.CLOSED_ISSUE_NUMBER),
+              body: process.env.COMMENT_BODY
+            });
 
       - name: Reenable to allow restarting, and enable challenge picker workflow.
         if: steps.should-run.outputs.should_run == 'true'
