@@ -396,6 +396,20 @@ const { removeAlerts } = require("./actions-utils");
   assert.ok(output.includes('src="https://example.com/start-mol.png"'));
 })();
 
+// rewriteRepoLocalImageUrls: leaves already-absolute repo image URLs untouched
+(() => {
+  // Arrange
+  const text = `
+  <img alt="hero" src="https://github.com/octo/repo/raw/main/.github/images/start-mol.png" />
+  ![Hero](https://github.com/octo/repo/raw/main/.github/images/start-mol.png)
+  `;
+
+  // Act
+  const output = rewriteRepoLocalImageUrls(text, "https://github.com/octo/repo/raw/main/.github/images");
+
+  // Assert
+  assert.deepStrictEqual(output, text);
+})();
 // rewriteRepoLocalImageUrls: empty base URL leaves text unchanged
 (() => {
   // Arrange
