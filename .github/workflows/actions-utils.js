@@ -53,10 +53,33 @@ function removeAlerts(text) {
   return cleaned.replace(/\n{3,}/g, "\n\n");
 }
 
+function rewriteRepoLocalImageUrls(text, repoImageBaseUrl) {
+  if (typeof text !== "string" || text.length === 0) return text;
+  if (typeof repoImageBaseUrl !== "string" || repoImageBaseUrl.length === 0) return text;
+
+  const normalizedBaseUrl = repoImageBaseUrl.replace(/\/+$/, "");
+  const localImagePathPattern = /(?:\.\/)?\.github\/images\/([^)'" \t\r\n>]+)/g;
+
+  const rewritePath = (path) => {
+    return path.replace(localImagePathPattern, `${normalizedBaseUrl}/$1`);
+  };
+
+  return text
+    .replace(
+      /(<img\b[^>]*?\bsrc\s*=\s*)(["'])([^"']+)(\2)/gi,
+      (match, prefix, quote, path, suffix) => `${prefix}${quote}${rewritePath(path)}${suffix}`
+    )
+    .replace(
+      /(!\[[^\]]*]\()([^)]+)(\))/g,
+      (match, prefix, path, suffix) => `${prefix}${rewritePath(path)}${suffix}`
+    );
+}
+
 module.exports = {
   getCheckboxes,
   getCheckedValue,
   disableCheckboxes,
   resetCheckboxes,
   removeAlerts,
+  rewriteRepoLocalImageUrls,
 };

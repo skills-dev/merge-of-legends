@@ -290,21 +290,31 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
+      - name: Build comment - show tip
+        id: build-tip
+        uses: ./.github/actions/render-markdown-template
+        with:
+          template-file: .github/steps/2-6-copilot-tip.md
+          repo-image-base-url: ${{ env.REPO_IMAGE_BASE_URL }}
+
       - name: Add comment - show tip
         uses: GrantBirki/comment@v2.1.1
         with:
           issue-number: ${{ env.ISSUE_NUMBER }}
-          file: ".github/steps/2-6-copilot-tip.md"
-          vars: |
-            repo_image_base_url: ${{ env.REPO_IMAGE_BASE_URL }}
+          body: ${{ steps.build-tip.outputs.rendered-text }}
+
+      - name: Build comment - finalize quest
+        id: build-finish
+        uses: ./.github/actions/render-markdown-template
+        with:
+          template-file: .github/steps/2-5-copilot-finish.md
+          repo-image-base-url: ${{ env.REPO_IMAGE_BASE_URL }}
 
       - name: Add comment - finalize quest
         uses: GrantBirki/comment@v2.1.1
         with:
           issue-number: ${{ env.ISSUE_NUMBER }}
-          file: ".github/steps/2-5-copilot-finish.md"
-          vars: |
-            repo_image_base_url: ${{ env.REPO_IMAGE_BASE_URL }}
+          body: ${{ steps.build-finish.outputs.rendered-text }}
 
       - name: Close the issue
         uses: actions/github-script@v7

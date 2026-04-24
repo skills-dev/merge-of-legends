@@ -1,6 +1,6 @@
-<img alt="Our sacred tree falls to a force of many heads. I see 4,221 possible futures, but only one compiles... Modelwrite or simple tracebinder, show me your generation's eye so I may confirm your path. " src="{{ repo_image_base_url }}/copilot-sacred-tree-quote.png" />
+<img alt="Our sacred tree falls to a force of many heads. I see 4,221 possible futures, but only one compiles... Modelwrite or simple tracebinder, show me your generation's eye so I may confirm your path. " src=".github/images/copilot-sacred-tree-quote.png" />
 
-## Copilot Fundamentals
+## GH-600 - Developing in Agentic AI Systems certification quiz
 
 1. Verify that you understand Copilot best practices.
 1. In the next 3 comments, select the correct answer checkbox.

@@ -1,0 +1,25 @@
+name: Quest workflow harness
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-quest-workflows:
+    name: Validate quest workflows
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Run workflow contract tests
+        run: |
+          node .github/workflows/actions-utils.test.js
+          node .github/workflows/quest-issue-utils.test.js
+          node .github/workflows/check-date-order.test.js
+          node .github/workflows/check-ducky-image-mod.test.js
+          node .github/workflows/quest-workflow-harness.test.js

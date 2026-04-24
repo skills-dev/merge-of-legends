@@ -18,23 +18,33 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Build comment - show file content
+        id: build-intro
+        uses: ./.github/actions/render-markdown-template
+        with:
+          template-file: .github/steps/3-1-ducky-intro.md
+          repo-image-base-url: ${{ env.REPO_IMAGE_BASE_URL }}
+
       - name: Add comment - show file content
         uses: GrantBirki/comment@v2.1.1
         with:
           issue-number: ${{ inputs['issue-number'] }}
-          file: ".github/steps/3-1-ducky-intro.md"
-          vars: |
-            ducky_intro_image_url: ${{ env.REPO_IMAGE_BASE_URL }}/ducky-intro.png
-            mona_intro_image_url: ${{ env.REPO_IMAGE_BASE_URL }}/mona-intro.png
-            copilot_intro_image_url: ${{ env.REPO_IMAGE_BASE_URL }}/copilot-intro.png
+          body: ${{ steps.build-intro.outputs.rendered-text }}
+
+      - name: Build comment - show task
+        id: build-task
+        uses: ./.github/actions/render-markdown-template
+        with:
+          template-file: .github/steps/3-2-ducky-talk.md
+          template-vars: |
+            repo_image_base_url: ${{ env.REPO_IMAGE_BASE_URL }}
+          repo-image-base-url: ${{ env.REPO_IMAGE_BASE_URL }}
 
       - name: Add comment - show task
         uses: GrantBirki/comment@v2.1.1
         with:
           issue-number: ${{ inputs['issue-number'] }}
-          file: ".github/steps/3-2-ducky-talk.md"
-          vars: |
-            repo_image_base_url: ${{ env.REPO_IMAGE_BASE_URL }}
+          body: ${{ steps.build-task.outputs.rendered-text }}
 
       - name: Disable current workflow and enable next workflow
         run: |
