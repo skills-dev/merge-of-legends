@@ -4,8 +4,6 @@ const path = require("path");
 const { rewriteRepoLocalImageUrls } = require("./actions-utils");
 
 const REPO_ROOT = path.resolve(__dirname, "..", "..");
-const STEPS_DIR = path.join(REPO_ROOT, ".github", "steps");
-const WORKFLOWS_DIR = path.join(REPO_ROOT, ".github", "workflows");
 const REPO_IMAGE_BASE_URL = "https://github.com/octo-org/quest-repo/raw/main/.github/images";
 
 function readRepoFile(relativePath) {
@@ -19,6 +17,16 @@ function getImageAttributePaths(text) {
   ].map((match) => match[2] || match[1]);
 }
 
+function isRepoLocalImagePath(value) {
+  return (
+    typeof value === "string" &&
+    (value.startsWith("../images/") ||
+      value.startsWith("./../images/") ||
+      value.startsWith(".github/images/") ||
+      value.startsWith("./.github/images/"))
+  );
+}
+
 function assertNoRepoLocalImagesInCode(relativePath) {
   const text = readRepoFile(relativePath);
   const inlineCodeMatches = [...text.matchAll(/`([^`]+)`/g)].map((match) => match[1]);
@@ -27,7 +35,10 @@ function assertNoRepoLocalImagesInCode(relativePath) {
 
   for (const segment of codeSegments) {
     assert.ok(
-      !segment.includes(".github/images/"),
+      !segment.includes("../images/") &&
+        !segment.includes("./../images/") &&
+        !segment.includes(".github/images/") &&
+        !segment.includes("./.github/images/"),
       `${relativePath} contains repo-local image syntax inside code content, which the renderer would rewrite unexpectedly`
     );
   }
@@ -38,17 +49,20 @@ function assertRenderedImagesNormalize(relativePath) {
   const rendered = rewriteRepoLocalImageUrls(source, REPO_IMAGE_BASE_URL);
   const sourcePaths = getImageAttributePaths(source);
   const renderedPaths = getImageAttributePaths(rendered);
-  const repoLocalSourcePaths = sourcePaths.filter((value) => value.includes(".github/images/"));
+  const repoLocalSourcePaths = sourcePaths.filter(isRepoLocalImagePath);
 
   for (const renderedPath of renderedPaths) {
     assert.ok(
-      !renderedPath.startsWith(".github/images/") && !renderedPath.startsWith("./.github/images/"),
+      !isRepoLocalImagePath(renderedPath),
       `${relativePath} still contains repo-local image path after rendering: ${renderedPath}`
     );
   }
 
   for (const sourcePath of repoLocalSourcePaths) {
-    const normalizedPath = sourcePath.replace(/^(?:\.\/)?\.github\/images\//, `${REPO_IMAGE_BASE_URL}/`);
+    const normalizedPath = sourcePath.replace(
+      /^(?:(?:\.\/)?\.github\/images|(?:\.\/)?\.\.\/images)\//,
+      `${REPO_IMAGE_BASE_URL}/`
+    );
     assert.ok(
       rendered.includes(normalizedPath),
       `${relativePath} did not rewrite ${sourcePath} to ${normalizedPath}`
@@ -121,29 +135,13 @@ function assertQuestCompletionFlow(relativePath, disableStepName) {
   );
 }
 
-const activeTemplateFiles = [
-  ".github/steps/0-0-start.md",
-  ".github/steps/1-1-mona-intro.md",
-  ".github/steps/1-2-mona-talk.md",
-  ".github/steps/1-3-mona-graph.md",
-  ".github/steps/1-4-mona-talk.md",
-  ".github/steps/1-5-mona-finish.md",
-  ".github/steps/1-6-mona-tip.md",
-  ".github/steps/2-1-copilot-intro.md",
-  ".github/steps/2-2-copilot-talk.md",
-  ".github/steps/2-3-copilot-quiz-1.md",
-  ".github/steps/2-3-copilot-quiz-2.md",
-  ".github/steps/2-3-copilot-quiz-3.md",
-  ".github/steps/2-5-copilot-finish.md",
-  ".github/steps/2-6-copilot-tip.md",
-  ".github/steps/3-1-ducky-intro.md",
-  ".github/steps/3-2-ducky-talk.md",
-  ".github/steps/3-5-ducky-finish.md",
-  ".github/steps/3-6-ducky-tip.md",
-  ".github/steps/x-close-with-next-link.md",
-];
+const stepMarkdownFiles = fs
+  .readdirSync(path.join(REPO_ROOT, ".github", "steps"))
+  .filter((fileName) => fileName.endsWith(".md"))
+  .map((fileName) => `.github/steps/${fileName}`)
+  .sort();
 
-for (const templateFile of activeTemplateFiles) {
+for (const templateFile of stepMarkdownFiles) {
   assertNoRepoLocalImagesInCode(templateFile);
   assertRenderedImagesNormalize(templateFile);
 }

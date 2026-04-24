@@ -8,7 +8,8 @@ inputs:
   template-vars:
     description: YAML or JSON template variables for the text renderer.
     required: false
-    default: "{}"
+    default: |
+      __unused__: true
   repo-image-base-url:
     description: Absolute base URL for repository images.
     required: false
