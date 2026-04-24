@@ -20,7 +20,7 @@ jobs:
       - name: Add comment - show challenge intro
         uses: GrantBirki/comment@v2.1.1
         with:
-          issue-number: ${{ inputs.issue-number }}
+          issue-number: ${{ inputs['issue-number'] }}
           file: ".github/steps/1-1-mona-intro.md"
           vars: |
             repo_image_base_url: ${{ env.REPO_IMAGE_BASE_URL }}
@@ -28,7 +28,7 @@ jobs:
       - name: Add comment - show task
         uses: GrantBirki/comment@v2.1.1
         with:
-          issue-number: ${{ inputs.issue-number }}
+          issue-number: ${{ inputs['issue-number'] }}
           file: ".github/steps/1-2-mona-talk.md"
           vars: |
             repo_image_base_url: ${{ env.REPO_IMAGE_BASE_URL }}
@@ -36,7 +36,7 @@ jobs:
       - name: Add comment - show graph
         uses: GrantBirki/comment@v2.1.1
         with:
-          issue-number: ${{ inputs.issue-number }}
+          issue-number: ${{ inputs['issue-number'] }}
           file: ".github/steps/1-3-mona-graph.md"
 
       - name: Disable current workflow and enable next workflow

@@ -21,7 +21,7 @@ jobs:
       - name: Add comment - show file content
         uses: GrantBirki/comment@v2.1.1
         with:
-          issue-number: ${{ inputs.issue-number }}
+          issue-number: ${{ inputs['issue-number'] }}
           file: ".github/steps/3-1-ducky-intro.md"
           vars: |
             ducky_intro_image_url: ${{ env.REPO_IMAGE_BASE_URL }}/ducky-intro.png
@@ -31,7 +31,7 @@ jobs:
       - name: Add comment - show task
         uses: GrantBirki/comment@v2.1.1
         with:
-          issue-number: ${{ inputs.issue-number }}
+          issue-number: ${{ inputs['issue-number'] }}
           file: ".github/steps/3-2-ducky-talk.md"
           vars: |
             repo_image_base_url: ${{ env.REPO_IMAGE_BASE_URL }}
