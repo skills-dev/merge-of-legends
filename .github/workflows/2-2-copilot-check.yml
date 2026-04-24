@@ -1,5 +1,9 @@
 name: 2-2 Copilot Check
 
+concurrency:
+  group: 2-2-copilot-check-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
 on:
   issue_comment:
     types: [edited]
@@ -320,3 +324,12 @@ jobs:
           gh workflow disable "2-2 Copilot Check" || true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  handoff_to_start:
+    name: Open next quest
+    needs: finish_challenge
+    if: ${{ needs.finish_challenge.result == 'success' }}
+    uses: ./.github/workflows/0-0-start.yml
+    with:
+      closed-issue-number: ${{ github.event.issue.number }}
+    secrets: inherit
