@@ -111,11 +111,10 @@ jobs:
       - name: Build issue description
         id: build-issue-description
         if: steps.should-run.outputs.should_run == 'true'
-        uses: skills/action-text-variables@v4.0.0
+        uses: ./.github/actions/render-markdown-template
         with:
           template-file: .github/steps/0-0-start.md
-          template-vars: |
-            repo_image_base_url: ${{ github.server_url }}/${{ github.repository }}/raw/${{ github.event.repository.default_branch }}/.github/images
+          repo-image-base-url: ${{ github.server_url }}/${{ github.repository }}/raw/${{ github.event.repository.default_branch }}/.github/images
 
       - name: Create issue
         id: create-issue
@@ -139,7 +138,7 @@ jobs:
             core.setOutput('issue_number', issue.number.toString());
         env:
           ISSUE_REPOSITORY: ${{ env.ISSUE_REPOSITORY || github.repository }}
-          ISSUE_BODY: ${{ steps.build-issue-description.outputs.updated-text }}
+          ISSUE_BODY: ${{ steps.build-issue-description.outputs.rendered-text }}
           EXERCISE_TITLE: ${{ env.EXERCISE_TITLE }}
           ISSUE_TITLE_PREFIX: ${{ env.ISSUE_TITLE_PREFIX }}
 
@@ -178,7 +177,7 @@ jobs:
       - name: Build close comment
         id: build-close-comment
         if: ${{ steps.should-run.outputs.should_run == 'true' && steps.set-next-issue-url.outputs.issue_url != '' && steps.set-closed-issue-number.outputs.issue_number != '' }}
-        uses: skills/action-text-variables@v4.0.0
+        uses: ./.github/actions/render-markdown-template
         with:
           template-file: .github/steps/x-close-with-next-link.md
           template-vars: |
@@ -189,7 +188,7 @@ jobs:
         uses: actions/github-script@v7
         env:
           CLOSED_ISSUE_NUMBER: ${{ steps.set-closed-issue-number.outputs.issue_number }}
-          COMMENT_BODY: ${{ steps.build-close-comment.outputs.updated-text }}
+          COMMENT_BODY: ${{ steps.build-close-comment.outputs.rendered-text }}
         with:
           script: |
             await github.rest.issues.createComment({

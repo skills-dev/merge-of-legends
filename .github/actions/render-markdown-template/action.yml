@@ -1,0 +1,45 @@
+name: Render markdown template
+description: Render a markdown template and expand repository-local image paths.
+
+inputs:
+  template-file:
+    description: Path to the markdown template file.
+    required: true
+  template-vars:
+    description: YAML or JSON template variables for the text renderer.
+    required: false
+    default: "{}"
+  repo-image-base-url:
+    description: Absolute base URL for repository images.
+    required: false
+    default: ""
+
+outputs:
+  rendered-text:
+    description: The rendered markdown with repository-local image paths expanded.
+    value: ${{ steps.normalize.outputs.rendered_text }}
+
+runs:
+  using: composite
+  steps:
+    - name: Render template
+      id: render
+      uses: skills/action-text-variables@v4.0.0
+      with:
+        template-file: ${{ inputs.template-file }}
+        template-vars: ${{ inputs.template-vars }}
+
+    - name: Normalize repo image URLs
+      id: normalize
+      uses: actions/github-script@v7
+      env:
+        RENDERED_TEXT: ${{ steps.render.outputs.updated-text }}
+        REPO_IMAGE_BASE_URL: ${{ inputs.repo-image-base-url }}
+      with:
+        script: |
+          const { rewriteRepoLocalImageUrls } = require('./.github/workflows/actions-utils');
+
+          core.setOutput(
+            'rendered_text',
+            rewriteRepoLocalImageUrls(process.env.RENDERED_TEXT, process.env.REPO_IMAGE_BASE_URL)
+          );

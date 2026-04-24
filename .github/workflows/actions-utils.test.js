@@ -1,5 +1,10 @@
 const assert = require("assert");
-const { getCheckboxes, getCheckedValue, disableCheckboxes } = require("./actions-utils");
+const {
+  getCheckboxes,
+  getCheckedValue,
+  disableCheckboxes,
+  rewriteRepoLocalImageUrls,
+} = require("./actions-utils");
 
 const { resetCheckboxes } = require("./actions-utils");
 const { removeAlerts } = require("./actions-utils");
@@ -343,6 +348,105 @@ const { removeAlerts } = require("./actions-utils");
 
   // Assert
   assert.deepStrictEqual(output, input);
+})();
+
+// rewriteRepoLocalImageUrls: rewrites local HTML image sources
+(() => {
+  // Arrange
+  const text = '<img alt="hero" src=".github/images/start-mol.png" />';
+
+  // Act
+  const output = rewriteRepoLocalImageUrls(text, "https://github.com/octo/repo/raw/main/.github/images");
+
+  // Assert
+  assert.deepStrictEqual(
+    output,
+    '<img alt="hero" src="https://github.com/octo/repo/raw/main/.github/images/start-mol.png" />'
+  );
+})();
+
+// rewriteRepoLocalImageUrls: rewrites local markdown image links
+(() => {
+  // Arrange
+  const text = '![Hero](./.github/images/start-mol.png)';
+
+  // Act
+  const output = rewriteRepoLocalImageUrls(text, "https://github.com/octo/repo/raw/main/.github/images");
+
+  // Assert
+  assert.deepStrictEqual(
+    output,
+    '![Hero](https://github.com/octo/repo/raw/main/.github/images/start-mol.png)'
+  );
+})();
+
+// rewriteRepoLocalImageUrls: leaves placeholders and external URLs untouched
+(() => {
+  // Arrange
+  const text = `
+  <img alt="hero" src="{{ repo_image_base_url }}/start-mol.png" />
+  <img alt="external" src="https://example.com/start-mol.png" />
+  `;
+
+  // Act
+  const output = rewriteRepoLocalImageUrls(text, "https://github.com/octo/repo/raw/main/.github/images");
+
+  // Assert
+  assert.ok(output.includes('src="{{ repo_image_base_url }}/start-mol.png"'));
+  assert.ok(output.includes('src="https://example.com/start-mol.png"'));
+})();
+
+// rewriteRepoLocalImageUrls: leaves already-absolute repo image URLs untouched
+(() => {
+  // Arrange
+  const text = `
+  <img alt="hero" src="https://github.com/octo/repo/raw/main/.github/images/start-mol.png" />
+  ![Hero](https://github.com/octo/repo/raw/main/.github/images/start-mol.png)
+  `;
+
+  // Act
+  const output = rewriteRepoLocalImageUrls(text, "https://github.com/octo/repo/raw/main/.github/images");
+
+  // Assert
+  assert.deepStrictEqual(output, text);
+})();
+// rewriteRepoLocalImageUrls: empty base URL leaves text unchanged
+(() => {
+  // Arrange
+  const text = '<img alt="hero" src=".github/images/start-mol.png" />';
+
+  // Act
+  const output = rewriteRepoLocalImageUrls(text, "");
+
+  // Assert
+  assert.deepStrictEqual(output, text);
+})();
+
+// rewriteRepoLocalImageUrls: rewrites single-quoted HTML image sources
+(() => {
+  // Arrange
+  const text = "<img alt='hero' src='./.github/images/start-mol.png' />";
+
+  // Act
+  const output = rewriteRepoLocalImageUrls(text, "https://github.com/octo/repo/raw/main/.github/images");
+
+  // Assert
+  assert.deepStrictEqual(
+    output,
+    "<img alt='hero' src='https://github.com/octo/repo/raw/main/.github/images/start-mol.png' />"
+  );
+})();
+
+// rewriteRepoLocalImageUrls: leaves plain text local paths unchanged
+(() => {
+  // Arrange
+  const text = "Use .github/images/start-mol.png as a written example.";
+
+  // Act
+  const output = rewriteRepoLocalImageUrls(text, "https://github.com/octo/repo/raw/main/.github/images");
+
+  // Assert
+  assert.deepStrictEqual(output, text);
 })();
 
 // If nothing threw an exception, all tests passed

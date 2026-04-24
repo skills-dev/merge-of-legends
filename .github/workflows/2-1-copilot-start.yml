@@ -17,39 +17,70 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Build comment - show challenge intro
+        id: build-challenge-intro
+        uses: ./.github/actions/render-markdown-template
+        with:
+          template-file: .github/steps/2-1-copilot-intro.md
+          repo-image-base-url: ${{ env.REPO_IMAGE_BASE_URL }}
+
       - name: Add comment - show challenge intro
         uses: GrantBirki/comment@v2.1.1
         with:
           issue-number: ${{ inputs['issue-number'] }}
-          file: ".github/steps/2-1-copilot-intro.md"
-          vars: |
-            repo_image_base_url: ${{ env.REPO_IMAGE_BASE_URL }}
+          body: ${{ steps.build-challenge-intro.outputs.rendered-text }}
+
+      - name: Build comment - show task
+        id: build-task
+        uses: ./.github/actions/render-markdown-template
+        with:
+          template-file: .github/steps/2-2-copilot-talk.md
+          repo-image-base-url: ${{ env.REPO_IMAGE_BASE_URL }}
 
       - name: Add comment - show task
         uses: GrantBirki/comment@v2.1.1
         with:
           issue-number: ${{ inputs['issue-number'] }}
-          file: ".github/steps/2-2-copilot-talk.md"
-          vars: |
-            repo_image_base_url: ${{ env.REPO_IMAGE_BASE_URL }}
+          body: ${{ steps.build-task.outputs.rendered-text }}
+
+      - name: Build comment - show question 1
+        id: build-question-1
+        uses: ./.github/actions/render-markdown-template
+        with:
+          template-file: .github/steps/2-3-copilot-quiz-1.md
+          repo-image-base-url: ${{ env.REPO_IMAGE_BASE_URL }}
 
       - name: Add comment - show question 1
         uses: GrantBirki/comment@v2.1.1
         with:
           issue-number: ${{ inputs['issue-number'] }}
-          file: ".github/steps/2-3-copilot-quiz-1.md"
+          body: ${{ steps.build-question-1.outputs.rendered-text }}
+
+      - name: Build comment - show question 2
+        id: build-question-2
+        uses: ./.github/actions/render-markdown-template
+        with:
+          template-file: .github/steps/2-3-copilot-quiz-2.md
+          repo-image-base-url: ${{ env.REPO_IMAGE_BASE_URL }}
 
       - name: Add comment - show question 2
         uses: GrantBirki/comment@v2.1.1
         with:
           issue-number: ${{ inputs['issue-number'] }}
-          file: ".github/steps/2-3-copilot-quiz-2.md"
+          body: ${{ steps.build-question-2.outputs.rendered-text }}
+
+      - name: Build comment - show question 3
+        id: build-question-3
+        uses: ./.github/actions/render-markdown-template
+        with:
+          template-file: .github/steps/2-3-copilot-quiz-3.md
+          repo-image-base-url: ${{ env.REPO_IMAGE_BASE_URL }}
 
       - name: Add comment - show question 3
         uses: GrantBirki/comment@v2.1.1
         with:
           issue-number: ${{ inputs['issue-number'] }}
-          file: ".github/steps/2-3-copilot-quiz-3.md"
+          body: ${{ steps.build-question-3.outputs.rendered-text }}
 
       - name: Disable current workflow and enable next workflow
         run: |

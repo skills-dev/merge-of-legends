@@ -60,16 +60,22 @@ jobs:
           body-includes: inspection
           direction: last
 
+      - name: Build comment - step results
+        id: build-step-results
+        uses: ./.github/actions/render-markdown-template
+        with:
+          template-file: .github/steps/1-4-mona-talk.md
+          template-vars: |
+            not_asc_count: ${{ steps.check-dates-order.outputs.not-asc-count }}
+          repo-image-base-url: ${{ env.REPO_IMAGE_BASE_URL }}
+
       - name: Create or update comment - step results
         uses: GrantBirki/comment@v2.1.1
         with:
           issue-number: ${{ env.ISSUE_NUMBER }}
           comment-id: ${{ steps.find-review-comment.outputs.comment-id }}
           edit-mode: replace
-          file: ".github/steps/1-4-mona-talk.md"
-          vars: |
-            not_asc_count: ${{ steps.check-dates-order.outputs.not-asc-count }}
-            repo_image_base_url: ${{ env.REPO_IMAGE_BASE_URL }}
+          body: ${{ steps.build-step-results.outputs.rendered-text }}
 
       - name: Verify all checks passed
         id: verify-checks
@@ -104,21 +110,31 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
+      - name: Build comment - show tip
+        id: build-tip
+        uses: ./.github/actions/render-markdown-template
+        with:
+          template-file: .github/steps/1-6-mona-tip.md
+          repo-image-base-url: ${{ env.REPO_IMAGE_BASE_URL }}
+
       - name: Add comment - show tip
         uses: GrantBirki/comment@v2.1.1
         with:
           issue-number: ${{ env.ISSUE_NUMBER }}
-          file: ".github/steps/1-6-mona-tip.md"
-          vars: |
-            repo_image_base_url: ${{ env.REPO_IMAGE_BASE_URL }}
+          body: ${{ steps.build-tip.outputs.rendered-text }}
+
+      - name: Build comment - finalize quest
+        id: build-finish
+        uses: ./.github/actions/render-markdown-template
+        with:
+          template-file: .github/steps/1-5-mona-finish.md
+          repo-image-base-url: ${{ env.REPO_IMAGE_BASE_URL }}
 
       - name: Add comment - finalize quest
         uses: GrantBirki/comment@v2.1.1
         with:
           issue-number: ${{ env.ISSUE_NUMBER }}
-          file: ".github/steps/1-5-mona-finish.md"
-          vars: |
-            repo_image_base_url: ${{ env.REPO_IMAGE_BASE_URL }}
+          body: ${{ steps.build-finish.outputs.rendered-text }}
 
       - name: Close the issue
         uses: actions/github-script@v7

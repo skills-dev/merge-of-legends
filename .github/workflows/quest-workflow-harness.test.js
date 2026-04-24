@@ -1,0 +1,302 @@
+const assert = require("assert");
+const fs = require("fs");
+const path = require("path");
+const { rewriteRepoLocalImageUrls } = require("./actions-utils");
+
+const REPO_ROOT = path.resolve(__dirname, "..", "..");
+const STEPS_DIR = path.join(REPO_ROOT, ".github", "steps");
+const WORKFLOWS_DIR = path.join(REPO_ROOT, ".github", "workflows");
+const REPO_IMAGE_BASE_URL = "https://github.com/octo-org/quest-repo/raw/main/.github/images";
+
+function readRepoFile(relativePath) {
+  return fs.readFileSync(path.join(REPO_ROOT, relativePath), "utf8");
+}
+
+function getImageAttributePaths(text) {
+  return [
+    ...text.matchAll(/<img\b[^>]*?\bsrc\s*=\s*(["'])([^"']+)\1/gi),
+    ...text.matchAll(/!\[[^\]]*]\(([^)]+)\)/g),
+  ].map((match) => match[2] || match[1]);
+}
+
+function assertNoRepoLocalImagesInCode(relativePath) {
+  const text = readRepoFile(relativePath);
+  const inlineCodeMatches = [...text.matchAll(/`([^`]+)`/g)].map((match) => match[1]);
+  const fencedCodeMatches = [...text.matchAll(/```[\s\S]*?```/g)].map((match) => match[0]);
+  const codeSegments = [...inlineCodeMatches, ...fencedCodeMatches];
+
+  for (const segment of codeSegments) {
+    assert.ok(
+      !segment.includes(".github/images/"),
+      `${relativePath} contains repo-local image syntax inside code content, which the renderer would rewrite unexpectedly`
+    );
+  }
+}
+
+function assertRenderedImagesNormalize(relativePath) {
+  const source = readRepoFile(relativePath);
+  const rendered = rewriteRepoLocalImageUrls(source, REPO_IMAGE_BASE_URL);
+  const sourcePaths = getImageAttributePaths(source);
+  const renderedPaths = getImageAttributePaths(rendered);
+  const repoLocalSourcePaths = sourcePaths.filter((value) => value.includes(".github/images/"));
+
+  for (const renderedPath of renderedPaths) {
+    assert.ok(
+      !renderedPath.startsWith(".github/images/") && !renderedPath.startsWith("./.github/images/"),
+      `${relativePath} still contains repo-local image path after rendering: ${renderedPath}`
+    );
+  }
+
+  for (const sourcePath of repoLocalSourcePaths) {
+    const normalizedPath = sourcePath.replace(/^(?:\.\/)?\.github\/images\//, `${REPO_IMAGE_BASE_URL}/`);
+    assert.ok(
+      rendered.includes(normalizedPath),
+      `${relativePath} did not rewrite ${sourcePath} to ${normalizedPath}`
+    );
+  }
+}
+
+function assertWorkflowUsesRenderer(relativePath, expectations) {
+  const workflow = readRepoFile(relativePath);
+
+  for (const expectation of expectations) {
+    assert.ok(
+      workflow.includes(`id: ${expectation.buildStepId}`),
+      `${relativePath} is missing build step ${expectation.buildStepId}`
+    );
+    assert.ok(
+      workflow.includes("uses: ./.github/actions/render-markdown-template"),
+      `${relativePath} does not use the shared markdown renderer`
+    );
+    assert.ok(
+      workflow.includes(`template-file: ${expectation.templateFile}`),
+      `${relativePath} is missing template-file ${expectation.templateFile}`
+    );
+    assert.ok(
+      workflow.includes(expectation.bodyReference),
+      `${relativePath} is missing rendered body reference ${expectation.bodyReference}`
+    );
+
+    if (expectation.extraIncludes) {
+      for (const value of expectation.extraIncludes) {
+        assert.ok(
+          workflow.includes(value),
+          `${relativePath} is missing expected workflow content: ${value}`
+        );
+      }
+    }
+  }
+}
+
+function assertInOrder(text, fragments, messagePrefix) {
+  let lastIndex = -1;
+
+  for (const fragment of fragments) {
+    const currentIndex = text.indexOf(fragment, lastIndex + 1);
+    assert.ok(currentIndex !== -1, `${messagePrefix} is missing fragment: ${fragment}`);
+    assert.ok(currentIndex > lastIndex, `${messagePrefix} has fragments out of order near: ${fragment}`);
+    lastIndex = currentIndex;
+  }
+}
+
+function assertQuestCompletionFlow(relativePath, disableStepName) {
+  const workflow = readRepoFile(relativePath);
+
+  assertInOrder(
+    workflow,
+    [
+      "name: Build comment - show tip",
+      "name: Add comment - show tip",
+      "name: Build comment - finalize quest",
+      "name: Add comment - finalize quest",
+      "name: Close the issue",
+      `name: ${disableStepName}`,
+      "handoff_to_start:",
+      "needs: finish_challenge",
+      "if: ${{ needs.finish_challenge.result == 'success' }}",
+      "uses: ./.github/workflows/0-0-start.yml",
+      "closed-issue-number: ${{ github.event.issue.number }}",
+    ],
+    `${relativePath} quest completion flow`
+  );
+}
+
+const activeTemplateFiles = [
+  ".github/steps/0-0-start.md",
+  ".github/steps/1-1-mona-intro.md",
+  ".github/steps/1-2-mona-talk.md",
+  ".github/steps/1-3-mona-graph.md",
+  ".github/steps/1-4-mona-talk.md",
+  ".github/steps/1-5-mona-finish.md",
+  ".github/steps/1-6-mona-tip.md",
+  ".github/steps/2-1-copilot-intro.md",
+  ".github/steps/2-2-copilot-talk.md",
+  ".github/steps/2-3-copilot-quiz-1.md",
+  ".github/steps/2-3-copilot-quiz-2.md",
+  ".github/steps/2-3-copilot-quiz-3.md",
+  ".github/steps/2-5-copilot-finish.md",
+  ".github/steps/2-6-copilot-tip.md",
+  ".github/steps/3-1-ducky-intro.md",
+  ".github/steps/3-2-ducky-talk.md",
+  ".github/steps/3-5-ducky-finish.md",
+  ".github/steps/3-6-ducky-tip.md",
+  ".github/steps/x-close-with-next-link.md",
+];
+
+for (const templateFile of activeTemplateFiles) {
+  assertNoRepoLocalImagesInCode(templateFile);
+  assertRenderedImagesNormalize(templateFile);
+}
+
+assertWorkflowUsesRenderer(".github/workflows/0-0-start.yml", [
+  {
+    buildStepId: "build-issue-description",
+    templateFile: ".github/steps/0-0-start.md",
+    bodyReference: "ISSUE_BODY: ${{ steps.build-issue-description.outputs.rendered-text }}",
+  },
+  {
+    buildStepId: "build-close-comment",
+    templateFile: ".github/steps/x-close-with-next-link.md",
+    bodyReference: "COMMENT_BODY: ${{ steps.build-close-comment.outputs.rendered-text }}",
+  },
+]);
+
+const closeWithNextLinkTemplate = readRepoFile(".github/steps/x-close-with-next-link.md");
+assert.ok(
+  closeWithNextLinkTemplate.includes("{{ next_issue_url }}"),
+  "The close-with-next-link template must include the next issue URL placeholder"
+);
+
+const startWorkflow = readRepoFile(".github/workflows/0-0-start.yml");
+assertInOrder(
+  startWorkflow,
+  [
+    "name: Set closed issue number",
+    "id: set-closed-issue-number",
+    "name: Build close comment",
+    "template-file: .github/steps/x-close-with-next-link.md",
+    "next_issue_url: ${{ steps.set-next-issue-url.outputs.issue_url }}",
+    "name: Add comment - close with next issue link",
+    "issue_number: Number(process.env.CLOSED_ISSUE_NUMBER)",
+    "body: process.env.COMMENT_BODY",
+  ],
+  ".github/workflows/0-0-start.yml closed-issue comment flow"
+);
+
+assertWorkflowUsesRenderer(".github/workflows/1-1-mona-start.yml", [
+  {
+    buildStepId: "build-challenge-intro",
+    templateFile: ".github/steps/1-1-mona-intro.md",
+    bodyReference: "body: ${{ steps.build-challenge-intro.outputs.rendered-text }}",
+  },
+  {
+    buildStepId: "build-task",
+    templateFile: ".github/steps/1-2-mona-talk.md",
+    bodyReference: "body: ${{ steps.build-task.outputs.rendered-text }}",
+  },
+  {
+    buildStepId: "build-graph",
+    templateFile: ".github/steps/1-3-mona-graph.md",
+    bodyReference: "body: ${{ steps.build-graph.outputs.rendered-text }}",
+  },
+]);
+
+assertWorkflowUsesRenderer(".github/workflows/1-2-mona-check.yml", [
+  {
+    buildStepId: "build-step-results",
+    templateFile: ".github/steps/1-4-mona-talk.md",
+    bodyReference: "body: ${{ steps.build-step-results.outputs.rendered-text }}",
+    extraIncludes: ["not_asc_count: ${{ steps.check-dates-order.outputs.not-asc-count }}"],
+  },
+  {
+    buildStepId: "build-tip",
+    templateFile: ".github/steps/1-6-mona-tip.md",
+    bodyReference: "body: ${{ steps.build-tip.outputs.rendered-text }}",
+  },
+  {
+    buildStepId: "build-finish",
+    templateFile: ".github/steps/1-5-mona-finish.md",
+    bodyReference: "body: ${{ steps.build-finish.outputs.rendered-text }}",
+  },
+]);
+assertQuestCompletionFlow(".github/workflows/1-2-mona-check.yml", "Disable current workflow");
+
+assertWorkflowUsesRenderer(".github/workflows/2-1-copilot-start.yml", [
+  {
+    buildStepId: "build-challenge-intro",
+    templateFile: ".github/steps/2-1-copilot-intro.md",
+    bodyReference: "body: ${{ steps.build-challenge-intro.outputs.rendered-text }}",
+  },
+  {
+    buildStepId: "build-task",
+    templateFile: ".github/steps/2-2-copilot-talk.md",
+    bodyReference: "body: ${{ steps.build-task.outputs.rendered-text }}",
+  },
+  {
+    buildStepId: "build-question-1",
+    templateFile: ".github/steps/2-3-copilot-quiz-1.md",
+    bodyReference: "body: ${{ steps.build-question-1.outputs.rendered-text }}",
+  },
+  {
+    buildStepId: "build-question-2",
+    templateFile: ".github/steps/2-3-copilot-quiz-2.md",
+    bodyReference: "body: ${{ steps.build-question-2.outputs.rendered-text }}",
+  },
+  {
+    buildStepId: "build-question-3",
+    templateFile: ".github/steps/2-3-copilot-quiz-3.md",
+    bodyReference: "body: ${{ steps.build-question-3.outputs.rendered-text }}",
+  },
+]);
+
+assertWorkflowUsesRenderer(".github/workflows/2-2-copilot-check.yml", [
+  {
+    buildStepId: "build-tip",
+    templateFile: ".github/steps/2-6-copilot-tip.md",
+    bodyReference: "body: ${{ steps.build-tip.outputs.rendered-text }}",
+  },
+  {
+    buildStepId: "build-finish",
+    templateFile: ".github/steps/2-5-copilot-finish.md",
+    bodyReference: "body: ${{ steps.build-finish.outputs.rendered-text }}",
+  },
+]);
+assertQuestCompletionFlow(".github/workflows/2-2-copilot-check.yml", "Disable current workflow");
+
+assertWorkflowUsesRenderer(".github/workflows/3-1-ducky-start.yml", [
+  {
+    buildStepId: "build-intro",
+    templateFile: ".github/steps/3-1-ducky-intro.md",
+    bodyReference: "body: ${{ steps.build-intro.outputs.rendered-text }}",
+  },
+  {
+    buildStepId: "build-task",
+    templateFile: ".github/steps/3-2-ducky-talk.md",
+    bodyReference: "body: ${{ steps.build-task.outputs.rendered-text }}",
+    extraIncludes: ["repo_image_base_url: ${{ env.REPO_IMAGE_BASE_URL }}"],
+  },
+]);
+
+assertWorkflowUsesRenderer(".github/workflows/3-2-ducky-check.yml", [
+  {
+    buildStepId: "build-tip",
+    templateFile: ".github/steps/3-6-ducky-tip.md",
+    bodyReference: "body: ${{ steps.build-tip.outputs.rendered-text }}",
+  },
+  {
+    buildStepId: "build-finish",
+    templateFile: ".github/steps/3-5-ducky-finish.md",
+    bodyReference: "body: ${{ steps.build-finish.outputs.rendered-text }}",
+  },
+]);
+assertQuestCompletionFlow(".github/workflows/3-2-ducky-check.yml", "Disable current workflow");
+
+// Ensure the pull request harness runs the quest workflow checks.
+const prWorkflow = readRepoFile(".github/workflows/quest-workflow-harness.yml");
+assert.ok(prWorkflow.includes("pull_request:"), "PR workflow harness must run on pull_request");
+assert.ok(
+  prWorkflow.includes("node .github/workflows/quest-workflow-harness.test.js"),
+  "PR workflow harness must run the workflow harness test"
+);
+
+console.log("All tests passed");
