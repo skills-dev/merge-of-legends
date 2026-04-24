@@ -58,10 +58,11 @@ function rewriteRepoLocalImageUrls(text, repoImageBaseUrl) {
   if (typeof repoImageBaseUrl !== "string" || repoImageBaseUrl.length === 0) return text;
 
   const normalizedBaseUrl = repoImageBaseUrl.replace(/\/+$/, "");
-  const localImagePathPattern = /(?:\.\/)?\.github\/images\/([^)'" \t\r\n>]+)/g;
+  const localImagePathPattern = /^(?:\.\/)?\.github\/images\/([^)'" \t\r\n>]+)$/;
 
   const rewritePath = (path) => {
-    return path.replace(localImagePathPattern, `${normalizedBaseUrl}/$1`);
+    const match = path.match(localImagePathPattern);
+    return match ? `${normalizedBaseUrl}/${match[1]}` : path;
   };
 
   return text
