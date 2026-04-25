@@ -158,14 +158,20 @@ jobs:
         if: steps.should-run.outputs.should_run == 'true'
         uses: actions/github-script@v7
         env:
-          CLOSED_ISSUE_NUMBER_FROM_INPUT: ${{ github.event_name == 'workflow_call' && inputs['closed-issue-number'] || '' }}
-          CLOSED_ISSUE_NUMBER_FROM_EVENT: ${{ github.event_name == 'issues' && github.event.issue.number || '' }}
+          INPUT_CLOSED_ISSUE_NUMBER: ${{ inputs['closed-issue-number'] }}
         with:
           script: |
-            const issueNumber =
-              process.env.CLOSED_ISSUE_NUMBER_FROM_INPUT ||
-              process.env.CLOSED_ISSUE_NUMBER_FROM_EVENT ||
-              '';
+            const fromInput = (process.env.INPUT_CLOSED_ISSUE_NUMBER || '').toString().trim();
+            const eventIssueNumber =
+              context.eventName === 'issues' && context.payload.issue
+                ? String(context.payload.issue.number)
+                : '';
+            const issueNumber = fromInput || eventIssueNumber || '';
+
+            core.info(`Event: ${context.eventName}`);
+            core.info(`Closed issue number from input: "${fromInput}"`);
+            core.info(`Closed issue number from event: "${eventIssueNumber}"`);
+            core.info(`Resolved closed issue number: "${issueNumber}"`);
 
             if (issueNumber && !/^\d+$/.test(issueNumber)) {
               core.setFailed(`Closed issue number must be numeric. Received: ${issueNumber}`);
