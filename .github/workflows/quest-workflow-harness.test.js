@@ -297,4 +297,49 @@ assert.ok(
   "PR workflow harness must run the workflow harness test"
 );
 
+// update_readme bootstrap job contract: renders start-game template and
+// publishes README.md only on initial template clone (push event on a
+// non-template repository). Must not run on workflow_call / issues /
+// issue_comment / workflow_dispatch so the normal quest flow never
+// rewrites the README.
+const readmeTemplatePath = ".github/markdown-templates/readme/start-game.md";
+const readmeTemplate = readRepoFile(readmeTemplatePath);
+assert.ok(
+  readmeTemplate.includes("{{ game_title }}"),
+  "start-game template must include {{ game_title }} placeholder"
+);
+assert.ok(
+  readmeTemplate.includes("{{ issues_url }}"),
+  "start-game template must include {{ issues_url }} placeholder"
+);
+assert.ok(
+  readmeTemplate.includes("{{ login }}"),
+  "start-game template must include {{ login }} placeholder"
+);
+assertRenderedImagesNormalize(readmeTemplatePath);
+
+assertInOrder(
+  startWorkflow,
+  [
+    "update_readme:",
+    "if: ${{ github.event_name == 'push' && github.repository != 'skills-dev/merge-of-legends' }}",
+    "contents: write",
+    "uses: actions/checkout@v5",
+    "id: render-readme",
+    "uses: ./.github/actions/render-markdown-template",
+    "template-file: .github/markdown-templates/readme/start-game.md",
+    "game_title: ${{ env.EXERCISE_TITLE }}",
+    "issues_url: ${{ github.server_url }}/${{ github.repository }}/issues",
+    "login: ${{ github.repository_owner }}",
+    "name: Publish README if changed",
+    "RENDERED_README: ${{ steps.render-readme.outputs.rendered-text }}",
+    "const path = 'README.md'",
+    "github.rest.repos.getContent",
+    "TEMPLATE_MARKER = 'template_owner=skills-dev&template_name=merge-of-legends'",
+    "github.rest.repos.createOrUpdateFileContents",
+    "docs: bootstrap README from start-game template",
+  ],
+  ".github/workflows/0-0-start.yml update_readme job"
+);
+
 console.log("All tests passed");
