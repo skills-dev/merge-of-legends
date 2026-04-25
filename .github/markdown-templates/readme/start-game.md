@@ -1,4 +1,4 @@
-# {{ game-title }}
+# {{ game_title }}
 
 <img alt="Merge of Legends" src=".github/images/start-mol.png" align="right" height="200px" />
 
