@@ -8,10 +8,6 @@ Save the land of Codia and restore the sacred Mainline with the help of three my
 - Solve mini challenges (about 5 minutes).
 - Combine powers and save the world.
 
-## Usage
-
-This mini-game must NOT be shared publicly. It is for use by GitHub Staff at events and should only be played from a controlled demo computer.
-
 ### How to host this game
 
 Use the below button to copy the game to a demo account. Wait **about 20 seconds** for the issue to be created.
