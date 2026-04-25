@@ -297,11 +297,14 @@ assert.ok(
   "PR workflow harness must run the workflow harness test"
 );
 
-// update_readme bootstrap job contract: renders start-game template and
+// 0-bootstrap-readme.yml contract: renders start-game template and
 // publishes README.md only on initial template clone (push event on a
-// non-template repository). Must not run on workflow_call / issues /
-// issue_comment / workflow_dispatch so the normal quest flow never
-// rewrites the README.
+// non-template repository). Lives in its own workflow file (not as a
+// job in 0-0-start.yml) so the `contents: write` permission does not
+// have to be delegated by every caller of the reusable 0-0-start
+// workflow — that mismatch caused startup_failure on cloned repos when
+// check workflows (which only have `contents: read`) invoked
+// 0-0-start via workflow_call.
 const readmeTemplatePath = ".github/markdown-templates/readme/start-game.md";
 const readmeTemplate = readRepoFile(readmeTemplatePath);
 assert.ok(
@@ -318,12 +321,37 @@ assert.ok(
 );
 assertRenderedImagesNormalize(readmeTemplatePath);
 
+const bootstrapWorkflowPath = ".github/workflows/0-bootstrap-readme.yml";
+const bootstrapWorkflow = readRepoFile(bootstrapWorkflowPath);
+
+// Bootstrap workflow must NOT be triggerable via workflow_call / issues /
+// issue_comment / workflow_dispatch — only direct push to main — so the
+// normal quest flow never rewrites the README and reusable-workflow
+// callers don't need to grant `contents: write`.
+assert.ok(
+  /\bon:\s*\n\s*push:\s*\n\s*branches:\s*\[main\]\s*\n\s*permissions:/m.test(
+    bootstrapWorkflow
+  ),
+  "0-bootstrap-readme.yml must trigger ONLY on push to main (no workflow_call/issues/issue_comment/workflow_dispatch)"
+);
+
+// 0-0-start.yml must NOT contain the README bootstrap job — it lives in
+// its own workflow now to avoid permission escalation through workflow_call.
+assert.ok(
+  !startWorkflow.includes("update_readme:"),
+  "0-0-start.yml must not contain update_readme job (moved to 0-bootstrap-readme.yml)"
+);
+
+assert.ok(
+  /^permissions:\s*\n\s*contents:\s*write\b/m.test(bootstrapWorkflow),
+  "0-bootstrap-readme.yml must declare workflow-level `permissions: contents: write`"
+);
+
 assertInOrder(
-  startWorkflow,
+  bootstrapWorkflow,
   [
     "update_readme:",
-    "if: ${{ github.event_name == 'push' && github.repository != 'skills-dev/merge-of-legends' }}",
-    "contents: write",
+    "if: ${{ github.repository != 'skills-dev/merge-of-legends' }}",
     "uses: actions/checkout@v5",
     "id: render-readme",
     "uses: ./.github/actions/render-markdown-template",
@@ -339,7 +367,7 @@ assertInOrder(
     "github.rest.repos.createOrUpdateFileContents",
     "docs: bootstrap README from start-game template",
   ],
-  ".github/workflows/0-0-start.yml update_readme job"
+  ".github/workflows/0-bootstrap-readme.yml update_readme job"
 );
 
 console.log("All tests passed");
