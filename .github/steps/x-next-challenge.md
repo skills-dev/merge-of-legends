@@ -1,6 +1,6 @@
 ## The journey isn't over! 🧙
 
-<img width="250px" src="../images/next-challenge-hero.png" align="right">
+<img width="250px" alt="next-challenge-hero" src="../images/next-challenge-hero.png" align="right">
 
 With your magical gift collected, you are ready to tackle the merge of legends!
 
