@@ -9,6 +9,6 @@ With your magical gift collected, you are ready to tackle the merge of legends!
 
 <p align="center">
    <b>Enter the Dungeon</b><br />
-   <img width="200" src="../images/next-challenge-item.png" /><br/>
+   <img width="200" src="../images/next-challenge-item.png" alt="QR code to enter the dungeon" /><br/>
    https://gh.io/MoL
 </p>
