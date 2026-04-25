@@ -234,7 +234,7 @@ jobs:
         with:
           template-file: .github/markdown-templates/readme/start-game.md
           template-vars: |
-            game-title: ${{ env.EXERCISE_TITLE }}
+            game_title: ${{ env.EXERCISE_TITLE }}
             issues_url: ${{ github.server_url }}/${{ github.repository }}/issues
             login: ${{ github.repository_owner }}
 
