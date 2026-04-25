@@ -1,6 +1,6 @@
 # {{ game-title }}
 
-<img alt="Merge of Legends" src="../../images/start-mol.png" align="right" height="200px" />
+<img alt="Merge of Legends" src=".github/images/start-mol.png" align="right" height="200px" />
 
 Hey {{ login }}!
 
