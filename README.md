@@ -1,6 +1,6 @@
 # Merge of Legends
 
-<img width="60%" height="60%" alt="Merge of Legends" src=".github/images/start-mol.png" />
+<img alt="Merge of Legends" src=".github/images/start-mol.png" align="right" height="200px" />
 
 Save the land of Codia and restore the sacred Mainline with the help of three mythical creatures and their gifts.
 
