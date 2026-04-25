@@ -244,9 +244,9 @@ jobs:
           RENDERED_README: ${{ steps.render-readme.outputs.rendered-text }}
         with:
           script: |
-            const fs = require('fs');
             const path = 'README.md';
             const rendered = process.env.RENDERED_README || '';
+            const branch = context.ref.replace(/^refs\/heads\//, '');
 
             if (!rendered.trim()) {
               core.setFailed('Rendered README is empty; refusing to publish.');
@@ -259,7 +259,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 path,
-                ref: context.ref,
+                ref: branch,
               });
               currentFile = data;
             } catch (err) {
@@ -269,6 +269,17 @@ jobs:
             const currentContent = currentFile
               ? Buffer.from(currentFile.content, currentFile.encoding || 'base64').toString('utf8')
               : '';
+
+            // One-shot guard: only bootstrap when the README still carries
+            // the source-template "Copy Game" marker. After the first
+            // bootstrap (or any manual edit that removes the marker) this
+            // step is a no-op, so legitimate README changes in cloned
+            // repos are never overwritten.
+            const TEMPLATE_MARKER = 'template_owner=skills-dev&template_name=merge-of-legends';
+            if (!currentContent.includes(TEMPLATE_MARKER)) {
+              core.info('README no longer contains template-source marker; skipping bootstrap.');
+              return;
+            }
 
             if (currentContent === rendered) {
               core.info('README already up to date; no commit needed.');
@@ -282,7 +293,7 @@ jobs:
               message: 'docs: bootstrap README from start-game template',
               content: Buffer.from(rendered, 'utf8').toString('base64'),
               sha: currentFile ? currentFile.sha : undefined,
-              branch: context.ref.replace(/^refs\/heads\//, ''),
+              branch,
             });
 
             core.info(`Published README at commit ${result.data.commit.sha}.`);

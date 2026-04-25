@@ -335,6 +335,7 @@ assertInOrder(
     "RENDERED_README: ${{ steps.render-readme.outputs.rendered-text }}",
     "const path = 'README.md'",
     "github.rest.repos.getContent",
+    "TEMPLATE_MARKER = 'template_owner=skills-dev&template_name=merge-of-legends'",
     "github.rest.repos.createOrUpdateFileContents",
     "docs: bootstrap README from start-game template",
   ],
