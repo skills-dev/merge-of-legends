@@ -305,8 +305,8 @@ assert.ok(
 const readmeTemplatePath = ".github/markdown-templates/readme/start-game.md";
 const readmeTemplate = readRepoFile(readmeTemplatePath);
 assert.ok(
-  readmeTemplate.includes("{{ game-title }}"),
-  "start-game template must include {{ game-title }} placeholder"
+  readmeTemplate.includes("{{ game_title }}"),
+  "start-game template must include {{ game_title }} placeholder"
 );
 assert.ok(
   readmeTemplate.includes("{{ issues_url }}"),
@@ -328,7 +328,7 @@ assertInOrder(
     "id: render-readme",
     "uses: ./.github/actions/render-markdown-template",
     "template-file: .github/markdown-templates/readme/start-game.md",
-    "game-title: ${{ env.EXERCISE_TITLE }}",
+    "game_title: ${{ env.EXERCISE_TITLE }}",
     "issues_url: ${{ github.server_url }}/${{ github.repository }}/issues",
     "login: ${{ github.repository_owner }}",
     "name: Publish README if changed",
