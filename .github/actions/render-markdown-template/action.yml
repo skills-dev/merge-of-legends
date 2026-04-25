@@ -24,16 +24,31 @@ runs:
   steps:
     - name: Render template
       id: render
+      if: ${{ inputs.template-vars != '{}' }}
       uses: skills/action-text-variables@v4.0.0
       with:
         template-file: ${{ inputs.template-file }}
         template-vars: ${{ inputs.template-vars }}
 
+    - name: Read template file (no variables)
+      id: read-raw
+      if: ${{ inputs.template-vars == '{}' }}
+      shell: bash
+      env:
+        TEMPLATE_FILE: ${{ inputs.template-file }}
+      run: |
+        DELIMITER=$(set +o pipefail; tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 32)
+        {
+          echo "text<<${DELIMITER}"
+          cat "$TEMPLATE_FILE"
+          echo "${DELIMITER}"
+        } >> "$GITHUB_OUTPUT"
+
     - name: Normalize repo image URLs
       id: normalize
       uses: actions/github-script@v7
       env:
-        RENDERED_TEXT: ${{ steps.render.outputs.updated-text }}
+        RENDERED_TEXT: ${{ steps.render.outcome == 'success' && steps.render.outputs.updated-text || steps.read-raw.outputs.text }}
         REPO_IMAGE_BASE_URL: ${{ inputs.repo-image-base-url }}
       with:
         script: |
