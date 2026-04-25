@@ -1,6 +1,6 @@
 ## Ducky Image Challenge
 
-<img width="70%" alt="To reflect like me is to be like me. But you are you, not a reflection of yourself. To understand my essence, you must listen first and speak last. Your test has already begun." src=".github/images/ducky-reflect-quote.png" />
+<img width="70%" alt="To reflect like me is to be like me. But you are you, not a reflection of yourself. To understand my essence, you must listen first and speak last. Your test has already begun." src="../images/ducky-reflect-quote.png" />
 
 Shape the three guides into view.
 

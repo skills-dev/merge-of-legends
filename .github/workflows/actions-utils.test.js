@@ -353,7 +353,7 @@ const { removeAlerts } = require("./actions-utils");
 // rewriteRepoLocalImageUrls: rewrites local HTML image sources
 (() => {
   // Arrange
-  const text = '<img alt="hero" src=".github/images/start-mol.png" />';
+  const text = '<img alt="hero" src="../images/start-mol.png" />';
 
   // Act
   const output = rewriteRepoLocalImageUrls(text, "https://github.com/octo/repo/raw/main/.github/images");
@@ -368,7 +368,7 @@ const { removeAlerts } = require("./actions-utils");
 // rewriteRepoLocalImageUrls: rewrites local markdown image links
 (() => {
   // Arrange
-  const text = '![Hero](./.github/images/start-mol.png)';
+  const text = '![Hero](../images/start-mol.png)';
 
   // Act
   const output = rewriteRepoLocalImageUrls(text, "https://github.com/octo/repo/raw/main/.github/images");
@@ -413,7 +413,7 @@ const { removeAlerts } = require("./actions-utils");
 // rewriteRepoLocalImageUrls: empty base URL leaves text unchanged
 (() => {
   // Arrange
-  const text = '<img alt="hero" src=".github/images/start-mol.png" />';
+  const text = '<img alt="hero" src="../images/start-mol.png" />';
 
   // Act
   const output = rewriteRepoLocalImageUrls(text, "");
@@ -425,7 +425,7 @@ const { removeAlerts } = require("./actions-utils");
 // rewriteRepoLocalImageUrls: rewrites single-quoted HTML image sources
 (() => {
   // Arrange
-  const text = "<img alt='hero' src='./.github/images/start-mol.png' />";
+  const text = "<img alt='hero' src='./../images/start-mol.png' />";
 
   // Act
   const output = rewriteRepoLocalImageUrls(text, "https://github.com/octo/repo/raw/main/.github/images");
@@ -440,13 +440,28 @@ const { removeAlerts } = require("./actions-utils");
 // rewriteRepoLocalImageUrls: leaves plain text local paths unchanged
 (() => {
   // Arrange
-  const text = "Use .github/images/start-mol.png as a written example.";
+  const text = "Use ../images/start-mol.png as a written example.";
 
   // Act
   const output = rewriteRepoLocalImageUrls(text, "https://github.com/octo/repo/raw/main/.github/images");
 
   // Assert
   assert.deepStrictEqual(output, text);
+})();
+
+// rewriteRepoLocalImageUrls: still supports root-style repo image paths
+(() => {
+  // Arrange
+  const text = '<img alt="hero" src=".github/images/start-mol.png" />';
+
+  // Act
+  const output = rewriteRepoLocalImageUrls(text, "https://github.com/octo/repo/raw/main/.github/images");
+
+  // Assert
+  assert.deepStrictEqual(
+    output,
+    '<img alt="hero" src="https://github.com/octo/repo/raw/main/.github/images/start-mol.png" />'
+  );
 })();
 
 // If nothing threw an exception, all tests passed

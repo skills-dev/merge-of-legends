@@ -1,4 +1,4 @@
-<img alt="Our sacred tree falls to a force of many heads. I see 4,221 possible futures, but only one compiles... Modelwrite or simple tracebinder, show me your generation's eye so I may confirm your path. " src=".github/images/copilot-sacred-tree-quote.png" />
+<img alt="Our sacred tree falls to a force of many heads. I see 4,221 possible futures, but only one compiles... Modelwrite or simple tracebinder, show me your generation's eye so I may confirm your path. " src="../images/copilot-sacred-tree-quote.png" />
 
 ## GH-600 - Developing in Agentic AI Systems certification quiz
 
